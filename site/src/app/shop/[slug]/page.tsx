@@ -11,6 +11,7 @@ import {
   getAllCategories,
   getProductBySlug,
   getProductsByCategory,
+  getRelatedProducts,
 } from '@/lib/catalog/queries';
 
 interface RouteParams {
@@ -52,6 +53,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
   const result = await getProductBySlug(slug);
   if (result) {
     const { product, images, categories } = result;
+    const related = await getRelatedProducts(product.id, 4);
     return (
       <Container className="py-16 md:py-24">
         <StructuredData
@@ -177,6 +179,18 @@ export default async function ShopSlugPage({ params }: RouteParams) {
             </details>
           </div>
         </div>
+
+        {related.length > 0 && (
+          <section className="mt-20 border-t border-cream-300/60 pt-12">
+            <SectionTitle
+              eyebrow="Pairs well with"
+              title="Other pieces from the studio."
+            />
+            <div className="mt-10">
+              <ProductGrid products={related} />
+            </div>
+          </section>
+        )}
       </Container>
     );
   }

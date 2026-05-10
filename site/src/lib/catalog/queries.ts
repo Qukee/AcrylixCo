@@ -1,5 +1,5 @@
 import 'server-only';
-import { eq, asc, desc, and, inArray, gte, lte, ilike } from 'drizzle-orm';
+import { eq, asc, desc, and, inArray, gte, lte, ilike, ne } from 'drizzle-orm';
 import { db } from '@/db';
 import { products, categories, productImages, productCategories } from '@/db/schema/catalog';
 
@@ -151,6 +151,37 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
     .from(products)
     .where(and(inArray(products.id, productIds)))
     .orderBy(desc(products.createdAt));
+  return Promise.all(rows.map(buildSummary));
+}
+
+export async function getRelatedProducts(
+  productId: string,
+  limit = 4,
+): Promise<ProductSummary[]> {
+  // Find categories of the current product, then any other product in those
+  // categories. Naive implementation: any shared category counts. Phase 4
+  // can score by category-overlap or by template kind.
+  const catRows = await db
+    .select({ categoryId: productCategories.categoryId })
+    .from(productCategories)
+    .where(eq(productCategories.productId, productId));
+  const categoryIds = catRows.map((c) => c.categoryId);
+  if (categoryIds.length === 0) return [];
+
+  const otherProductRows = await db
+    .selectDistinct({ productId: productCategories.productId })
+    .from(productCategories)
+    .where(
+      and(
+        inArray(productCategories.categoryId, categoryIds),
+        ne(productCategories.productId, productId),
+      ),
+    )
+    .limit(limit * 2);
+  const productIds = otherProductRows.map((r) => r.productId).slice(0, limit);
+  if (productIds.length === 0) return [];
+
+  const rows = await db.select().from(products).where(inArray(products.id, productIds));
   return Promise.all(rows.map(buildSummary));
 }
 
