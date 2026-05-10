@@ -4,6 +4,7 @@ import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
 import { TrustStrip } from '@/components/site/TrustStrip';
 import { HowItWorks } from '@/components/site/HowItWorks';
+import { ShopTheLook } from '@/components/site/ShopTheLook';
 import {
   getFeaturedProducts,
   getOccasionCategories,
@@ -64,6 +65,8 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+
+      <ShopTheLook />
 
       <section>
         <Container className="py-16 md:py-24">
