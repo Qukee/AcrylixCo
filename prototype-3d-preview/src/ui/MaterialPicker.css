@@ -1,0 +1,140 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--border);
+}
+
+.picker:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.picker__head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.picker__layer-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+.picker__current {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--fg);
+}
+
+.picker__finish {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--fg-dim);
+  margin-left: 0.4rem;
+  text-transform: capitalize;
+}
+
+.picker__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.picker__group {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.picker__group-name {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+.picker__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.swatch {
+  --swatch-color: #888;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--swatch-color);
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  position: relative;
+  cursor: pointer;
+  transition: transform 120ms ease;
+  flex-shrink: 0;
+}
+
+.swatch:hover {
+  transform: translateY(-1px);
+}
+
+.swatch.is-selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Finish-specific affordances on the CSS swatches. These are approximations —
+   the truth is in the 3D scene. */
+
+.swatch--mirror {
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    var(--swatch-color) 30%,
+    var(--swatch-color) 70%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+}
+
+.swatch--frosted {
+  background-image: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.55), transparent 60%);
+  background-color: var(--swatch-color);
+  filter: blur(0.3px);
+}
+
+.swatch--gloss {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.swatch--glitter {
+  background-image:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6) 0%, transparent 18%),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.5) 0%, transparent 14%),
+    radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.45) 0%, transparent 18%);
+  background-color: var(--swatch-color);
+}
+
+.swatch--neon {
+  box-shadow: 0 0 6px var(--swatch-color), 0 0 12px var(--swatch-color);
+}
+
+.swatch--clear {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.05));
+  border: 1px dashed var(--border-strong);
+}
+
+.swatch--glow {
+  box-shadow: 0 0 6px var(--swatch-color);
+}
+
+.swatch--matte {
+  /* deliberately flat — no extra gradient */
+}
