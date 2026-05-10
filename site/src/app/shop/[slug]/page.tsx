@@ -5,6 +5,7 @@ import { Container } from '@/components/site/Container';
 import { Button } from '@/components/site/Button';
 import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
+import { ProductMiniEditor } from '@/components/site/ProductMiniEditor';
 import { StructuredData } from '@/components/site/StructuredData';
 import { CategorySidebar } from '../CategorySidebar';
 import {
@@ -79,6 +80,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
     const { product, images, categories } = result;
     const related = await getRelatedProducts(product.id, 4);
     return (
+      <>
       <Container className="py-16 md:py-24">
         <StructuredData
           data={{
@@ -246,9 +248,13 @@ export default async function ShopSlugPage({ params }: RouteParams) {
             </details>
           </div>
         </div>
+      </Container>
 
-        {related.length > 0 && (
-          <section className="mt-20 border-t border-cream-200 pt-12">
+      <ProductMiniEditor product={product} categories={categories} />
+
+      {related.length > 0 && (
+        <Container className="py-16 md:py-24">
+          <section>
             <SectionTitle
               eyebrow="Pairs well with"
               title="Other pieces from the studio."
@@ -257,8 +263,9 @@ export default async function ShopSlugPage({ params }: RouteParams) {
               <ProductGrid products={related} />
             </div>
           </section>
-        )}
-      </Container>
+        </Container>
+      )}
+      </>
     );
   }
 

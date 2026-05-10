@@ -29,14 +29,18 @@ export default async function HomePage() {
     <>
       <section className="relative isolate overflow-hidden border-b border-cream-200">
         {/*
-          Full-bleed hero: editorial photograph behind the headline. The image
-          is a placeholder from Unsplash (CC0) — replace with our own
-          studio shoot in Phase 2.7.
+          Full-bleed hero. <video> autoplays muted-inline-looped so it acts as
+          a moving backdrop, with the stationery still as a poster for first
+          paint and the no-JS fallback.
         */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/hero/stationery-flatlay.jpg"
-          alt=""
+        <video
+          src="/hero/hero.mp4"
+          poster="/hero/stationery-flatlay.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"
         />
