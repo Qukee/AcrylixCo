@@ -1477,12 +1477,12 @@ git commit -m "chore(env): switch to Auth.js v5 env names (AUTH_URL, AUTH_TRUST_
 - [ ] **Step 3: Create the Railway project (human task — Railway dashboard)**
 
 1. railway.app → **New Project** → **Deploy from GitHub repo** → select `Qukee/AcrylixCo`.
-2. Railway scans the repo. Because the Next.js app is at `site/`, configure the service:
-   - **Settings → Source → Root Directory**: `site`
-   - **Settings → Build → Build Command**: leave as Nixpacks default (`npm ci && npm run build`) — Nixpacks auto-detects Next.js.
-   - **Settings → Deploy → Start Command**: `npx drizzle-kit migrate && npm run start`
-     - The `drizzle-kit migrate` prefix runs the migration on every deploy. Idempotent — already-applied migrations are skipped.
-   - **Settings → Watch Paths**: `site/**` — so commits that only touch `Plan/` or `prototype-3d-preview/` don't trigger rebuilds.
+2. **Build configuration is handled by `Dockerfile` + `railway.toml` at the repo root.** Railway reads these and uses the Dockerfile build automatically — no Root Directory or Build/Start Command setting needed in the dashboard.
+3. The Dockerfile:
+   - builds the Next.js app at `site/` in a multi-stage image
+   - applies Drizzle migrations on container start (idempotent), then runs `next start`
+   - reads `$PORT` from Railway's injected env var
+4. Optionally set **Watch Paths** to `site/**` and `Dockerfile` to skip rebuilds on Plan/ changes.
 
 - [ ] **Step 4: Add a Postgres service**
 

@@ -1,0 +1,38 @@
+# Don't ship node_modules — Dockerfile installs them fresh.
+**/node_modules
+
+# Don't ship build outputs — Dockerfile produces them.
+**/.next
+**/dist
+**/out
+**/build
+
+# Don't ship the prototype — it's not part of the production image.
+prototype-3d-preview/
+
+# Don't ship planning, architecture, CI, dev infra.
+Plan/
+.github/
+.husky/
+.vscode/
+.claude/
+
+# Don't ship environment files (the ones meant for local). Real prod env vars
+# are injected by Railway at runtime.
+**/.env.local
+**/.env.*.local
+
+# Test artifacts.
+**/coverage
+**/playwright-report
+**/test-results
+**/.playwright-mcp
+
+# OS / editor noise.
+.DS_Store
+*.log
+*.tmp
+
+# Git
+.git
+.gitignore

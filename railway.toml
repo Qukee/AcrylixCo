@@ -1,0 +1,11 @@
+# AcrylixCo — Railway service config.
+# Forces a Dockerfile build so Railway doesn't try to autodetect against the
+# root package.json (which is the husky/lint-staged shell, not the app).
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
