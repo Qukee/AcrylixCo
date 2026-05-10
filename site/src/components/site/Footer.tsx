@@ -32,7 +32,7 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-cream-300/60 bg-cream-50">
+    <footer className="mt-24 border-t border-cream-200 bg-white">
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
           {COLUMNS.map((col) => (
@@ -68,7 +68,7 @@ export function Footer() {
                 name="email"
                 placeholder="your@email.com"
                 aria-label="Email address"
-                className="w-full rounded-l-md border border-cream-400 bg-cream-100 px-4 py-2 text-sm text-ink-900 placeholder:text-ink-500"
+                className="w-full rounded-l-md border border-cream-300 bg-cream-50 px-4 py-2 text-sm text-ink-900 placeholder:text-ink-500"
               />
               <button
                 type="submit"
@@ -83,7 +83,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 border-t border-cream-300/60 pt-8">
+        <div className="mt-16 border-t border-cream-200 pt-8">
           <p className="font-serif text-lg italic text-ink-700">
             From the studio, Sydney. Every piece is made to order, by hand, in
             our Inner West workshop.

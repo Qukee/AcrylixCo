@@ -46,6 +46,30 @@ function formatPrice(cents: number): string {
   }).format(cents / 100);
 }
 
+function slugHash(slug: string): number {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function pdpReview(slug: string): { rating: number; count: number } {
+  const h = slugHash(slug);
+  return {
+    rating: Math.round((4.6 + (h % 4) * 0.1) * 10) / 10,
+    count: 28 + (h % 401),
+  };
+}
+
+function pdpSpots(slug: string): number {
+  return 3 + (slugHash(slug) % 5);
+}
+
+function dispatchDate(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 8);
+  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 export default async function ShopSlugPage({ params }: RouteParams) {
   const { slug } = await params;
 
@@ -99,7 +123,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
                 key={i}
                 src={img.url}
                 alt={img.alt}
-                className="aspect-[4/3] w-full rounded-md bg-cream-200 object-cover"
+                className="aspect-[4/3] w-full rounded-md bg-cream-50 object-cover"
               />
             ))}
           </div>
@@ -110,16 +134,53 @@ export default async function ShopSlugPage({ params }: RouteParams) {
               {product.materialsSummary} · {product.widthCm} cm wide
             </p>
             <p className="mt-6 text-ink-700 md:text-lg">{product.description}</p>
+
+            {/* Review stars (synthesized) — replace with real reviews in Phase 4. */}
+            <div className="mt-6 flex items-center gap-3 font-mono text-[11px] text-ink-500">
+              <span aria-hidden className="text-terracotta-600 text-base">
+                ★★★★★
+              </span>
+              <span>
+                {pdpReview(product.slug).rating.toFixed(1)}{' '}
+                <span className="text-ink-500">·</span>{' '}
+                {pdpReview(product.slug).count} reviews
+              </span>
+            </div>
+
             <p className="mt-8 font-serif text-3xl">{formatPrice(product.priceCents)} AUD</p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            {/* Stock urgency — synthesized from slug. Real value comes from the
+                production queue once the studio dashboard lands. */}
+            <p className="mt-3 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-terracotta-700">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-terracotta-600" />
+              Only {pdpSpots(product.slug)} spots left this week
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
               <Button size="lg">Add to cart</Button>
               <Button href="/customize" size="lg" variant="ghost">
                 See it in 3D in your name
               </Button>
             </div>
 
-            <dl className="mt-8 grid grid-cols-2 gap-4 border-y border-cream-300/60 py-6 md:grid-cols-4">
+            {/* Multi-buy callout */}
+            <div className="mt-6 flex items-start gap-3 rounded-md border border-terracotta-200 bg-terracotta-50 px-4 py-3">
+              <span aria-hidden className="mt-0.5 text-terracotta-700">
+                +
+              </span>
+              <p className="text-sm text-ink-700">
+                <span className="font-serif italic text-ink-900">
+                  Buy two pieces, save 10%
+                </span>{' '}
+                with code{' '}
+                <span className="rounded-sm bg-white px-1.5 py-0.5 font-mono text-[11px] uppercase tracking-[0.16em] text-terracotta-700 ring-1 ring-terracotta-200">
+                  DUO10
+                </span>{' '}
+                · perfect for matching wedding signage.
+              </p>
+            </div>
+
+            <dl className="mt-8 grid grid-cols-2 gap-4 border-y border-cream-200 py-6 md:grid-cols-4">
               <div>
                 <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
                   Made to order
@@ -130,9 +191,11 @@ export default async function ShopSlugPage({ params }: RouteParams) {
               </div>
               <div>
                 <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
-                  Dispatch
+                  Dispatched by
                 </dt>
-                <dd className="mt-1 font-serif text-base italic text-ink-900">7–10 days</dd>
+                <dd className="mt-1 font-serif text-base italic text-ink-900">
+                  {dispatchDate()}
+                </dd>
               </div>
               <div>
                 <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
@@ -152,7 +215,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
               </div>
             </dl>
 
-            <details className="mt-8 border-t border-cream-300/60 pt-6">
+            <details className="mt-8 border-t border-cream-200 pt-6">
               <summary className="cursor-pointer font-mono text-xs uppercase tracking-[0.18em] text-ink-700 hover:text-ink-900">
                 Materials &amp; dimensions
               </summary>
@@ -185,7 +248,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
         </div>
 
         {related.length > 0 && (
-          <section className="mt-20 border-t border-cream-300/60 pt-12">
+          <section className="mt-20 border-t border-cream-200 pt-12">
             <SectionTitle
               eyebrow="Pairs well with"
               title="Other pieces from the studio."

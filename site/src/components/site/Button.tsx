@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
-type Variant = 'primary' | 'ghost' | 'link';
+type Variant = 'primary' | 'ghost' | 'link' | 'sale';
 type Size = 'md' | 'lg';
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-ink-900 text-cream-50 hover:bg-ink-700 active:translate-y-px transition-colors',
+  primary:
+    'bg-terracotta-500 text-white hover:bg-terracotta-600 active:translate-y-px transition-colors',
+  sale: 'bg-terracotta-700 text-white hover:bg-terracotta-600 active:translate-y-px transition-colors',
   ghost:
     'border border-ink-700 text-ink-900 hover:bg-cream-50 active:translate-y-px transition-colors',
   link: 'text-ink-700 underline underline-offset-4 hover:text-ink-900 transition-colors',

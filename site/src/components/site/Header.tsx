@@ -2,12 +2,12 @@ import Link from 'next/link';
 
 export function Header() {
   return (
-    <header className="border-cream-300/60 border-b">
+    <header className="border-cream-200 bg-white border-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
           <span
             aria-hidden
-            className="border-cream-400 bg-cream-50 text-ink-900 grid h-8 w-8 place-items-center rounded-full border font-serif text-base italic"
+            className="border-terracotta-200 bg-terracotta-50 text-terracotta-700 grid h-8 w-8 place-items-center rounded-full border font-serif text-base italic"
           >
             A
           </span>
@@ -30,14 +30,14 @@ export function Header() {
           </Link>
           <Link
             href="/customize"
-            className="border-cream-400 text-ink-900 hover:bg-cream-50 rounded-full border px-4 py-1.5 transition-colors"
+            className="rounded-full bg-terracotta-500 px-4 py-1.5 text-white transition-colors hover:bg-terracotta-600"
           >
             Customize
           </Link>
         </nav>
         <Link
           href="/customize"
-          className="border-cream-400 text-ink-900 hover:bg-cream-50 inline-flex rounded-full border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] md:hidden"
+          className="inline-flex rounded-full bg-terracotta-500 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-colors hover:bg-terracotta-600 md:hidden"
         >
           Customize
         </Link>

@@ -33,16 +33,16 @@ const STEPS: Step[] = [
 
 export function HowItWorks() {
   return (
-    <section className="border-b border-cream-300/60">
+    <section className="border-b border-cream-200">
       <Container className="py-16 md:py-24">
         <SectionTitle
           eyebrow="How it works"
           title="From your screen to your shelf, in three steps."
         />
-        <ol className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-md border border-cream-300/60 bg-cream-300/60 md:grid-cols-3">
+        <ol className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-md border border-cream-200 bg-cream-200 md:grid-cols-3">
           {STEPS.map(({ n, title, body, Motion }) => (
-            <li key={n} className="flex flex-col bg-cream-50 p-8">
-              <div className="mb-6 grid h-28 w-full place-items-center rounded-sm bg-cream-100/70 ring-1 ring-cream-300/50">
+            <li key={n} className="flex flex-col bg-white p-8">
+              <div className="mb-6 grid h-28 w-full place-items-center rounded-sm bg-terracotta-50 ring-1 ring-terracotta-100">
                 <Motion />
               </div>
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-500">

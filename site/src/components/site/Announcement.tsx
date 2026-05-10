@@ -29,7 +29,7 @@ export function Announcement() {
 
   if (reduced) {
     return (
-      <div className="bg-cream-200 text-ink-700">
+      <div className="bg-cream-100 text-ink-700">
         <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-x-8 gap-y-1 px-6 py-2 text-center font-mono text-[11px] uppercase tracking-[0.16em]">
           {MESSAGES.map((m) => (
             <span key={m}>· {m}</span>
@@ -40,7 +40,7 @@ export function Announcement() {
   }
 
   return (
-    <div className="bg-cream-200 text-ink-700" aria-live="polite" aria-atomic="true">
+    <div className="bg-cream-100 text-ink-700" aria-live="polite" aria-atomic="true">
       <p className="mx-auto max-w-7xl px-6 py-2 text-center font-mono text-[11px] uppercase tracking-[0.16em]">
         {MESSAGES[index] ?? MESSAGES[0]!}
       </p>

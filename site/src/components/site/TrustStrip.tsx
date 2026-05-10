@@ -12,12 +12,12 @@ const CELLS: TrustCell[] = [
 
 export function TrustStrip() {
   return (
-    <section className="border-b border-cream-300/60 bg-cream-50">
+    <section className="border-y border-cream-200 bg-white">
       <ul className="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4">
         {CELLS.map((c) => (
           <li
             key={c.title}
-            className="border-r border-cream-300/60 px-6 py-6 last:border-r-0 md:py-8"
+            className="border-r border-cream-200 px-6 py-6 last:border-r-0 md:py-8"
           >
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-500">
               {c.detail}

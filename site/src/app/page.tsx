@@ -3,6 +3,7 @@ import { Button } from '@/components/site/Button';
 import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
 import { TrustStrip } from '@/components/site/TrustStrip';
+import { SaleBanner } from '@/components/site/SaleBanner';
 import { HowItWorks } from '@/components/site/HowItWorks';
 import { ShopTheLook } from '@/components/site/ShopTheLook';
 import {
@@ -26,7 +27,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden border-b border-cream-300/60">
+      <section className="relative isolate overflow-hidden border-b border-cream-200">
         {/*
           Full-bleed hero: editorial photograph behind the headline. The image
           is a placeholder from Unsplash (CC0) — replace with our own
@@ -40,13 +41,10 @@ export default async function HomePage() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         {/* Tonal wash + left-side gradient so the type stays legible on any crop. */}
+        <div aria-hidden className="absolute inset-0 bg-white/25" />
         <div
           aria-hidden
-          className="absolute inset-0 bg-cream-100/30"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-r from-cream-50/95 via-cream-50/70 to-transparent md:from-cream-50/95 md:via-cream-50/55 md:to-cream-50/0"
+          className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/75 to-transparent md:from-white/95 md:via-white/60 md:to-white/0"
         />
         <Container className="relative py-24 md:py-40">
           <div className="max-w-2xl">
@@ -73,6 +71,8 @@ export default async function HomePage() {
       </section>
 
       <TrustStrip />
+
+      <SaleBanner />
 
       <HowItWorks />
 
@@ -102,9 +102,9 @@ export default async function HomePage() {
               <li key={c.id}>
                 <Link
                   href={`/shop/${c.slug}`}
-                  className="block rounded-md border border-cream-300/60 bg-cream-100 p-6 transition-colors hover:border-cream-400 hover:bg-cream-50"
+                  className="block rounded-md border border-cream-200 bg-white p-6 transition-colors hover:border-terracotta-300 hover:bg-terracotta-50"
                 >
-                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-500">
+                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-terracotta-600">
                     Product
                   </p>
                   <h3 className="mt-2 font-serif text-xl italic">{c.name}</h3>
@@ -115,7 +115,7 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <section className="border-y border-cream-300/60 bg-cream-50">
+      <section className="border-y border-cream-200 bg-cream-50">
         <Container className="py-16 md:py-24">
           <SectionTitle
             eyebrow="Browse"
@@ -126,9 +126,9 @@ export default async function HomePage() {
               <li key={c.id}>
                 <Link
                   href={`/shop/${c.slug}`}
-                  className="block rounded-md border border-cream-300/60 bg-cream-50 p-6 transition-colors hover:border-cream-400"
+                  className="block rounded-md border border-cream-200 bg-white p-6 transition-colors hover:border-terracotta-300"
                 >
-                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-500">
+                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-terracotta-600">
                     Occasion
                   </p>
                   <h3 className="mt-2 font-serif text-xl italic">{c.name}</h3>
