@@ -14,7 +14,7 @@ The high-level roadmap (which phases exist, in what order, why) is in [`../22-im
 
 | Phase | Status | Plan |
 | --- | --- | --- |
-| 0 — Foundations | **Done locally** (Tasks 1–11). [Task 12 (Vercel/GitHub/Neon)](./phase-0-foundations.md#task-12-vercel-preview-deployment) needs human action — see notes below. | [`phase-0-foundations.md`](./phase-0-foundations.md) |
+| 0 — Foundations | **Done locally + pushed to GitHub** (Tasks 1–11 + repo on origin). [Task 12 (Railway)](./phase-0-foundations.md#task-12-railway-deployment) needs human action — see notes below. | [`phase-0-foundations.md`](./phase-0-foundations.md) |
 | 1 — Designer migration | Not yet planned | _will be written after Phase 0's remote bits land_ |
 | 2 — Storefront | Not yet planned | _will be written after Phase 1 ships_ |
 | 3 — Commerce | Not yet planned | _will be written after Phase 2 ships_ |
@@ -35,11 +35,11 @@ The high-level roadmap (which phases exist, in what order, why) is in [`../22-im
 - Auth.js v5 (beta.31) with credentials provider + Drizzle adapter. `/api/auth/session` returns 200.
 - Base layout (Header / Footer) + "Coming soon" hero on `/`.
 
-**Pending (human action required):**
-- Push the repo to GitHub (`git remote add origin … && git push -u origin main`).
-- Connect the GitHub repo to Vercel (Root Directory: `site`).
-- Provision a Neon `dev` Postgres branch, set Vercel env vars (`DATABASE_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`), apply the Drizzle migration to Neon.
-- Verify a preview URL renders and `/api/auth/session` returns 200.
+**Pending (human action required, Railway dashboard):**
+- Create a Railway project from `Qukee/AcrylixCo`, set service Root Directory to `site`, Start Command to `npx drizzle-kit migrate && npm run start`.
+- Add a Postgres service in the same Railway project.
+- Set service env vars: `DATABASE_URL=${{Postgres.DATABASE_URL}}`, `AUTH_SECRET` (generated), `AUTH_URL=https://${{RAILWAY_PUBLIC_DOMAIN}}`, `AUTH_TRUST_HOST=true`.
+- Verify the deployed URL renders the hero and `/api/auth/session` returns 200.
 
 Steps are fully scripted in [`phase-0-foundations.md`](./phase-0-foundations.md#task-12-vercel-preview-deployment). They're marked human-only because they need accounts and credentials this build agent doesn't have.
 

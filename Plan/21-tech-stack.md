@@ -72,10 +72,12 @@ See [payments & checkout](./15-payments-and-checkout.md).
 
 ## Hosting
 
-- **Vercel** for the Next.js frontend.
-- **Managed Postgres** (Neon, Supabase, or RDS).
-- **Separate worker host** for production-file generation (Fly.io, Railway, or a small EC2 — wherever Postgres lives).
-- **Cloudflare** in front for asset CDN and DDoS protection.
+- **Railway** for the Next.js frontend (owner has an active subscription). Container-based, GitHub-integrated, simpler bill than Vercel.
+- **Railway-managed Postgres** for the database (lives in the same Railway project as the app, connected via `${{Postgres.DATABASE_URL}}` variable reference).
+- **Separate worker service** in the same Railway project for production-file generation (added later).
+- **Cloudflare** in front for asset CDN and DDoS protection (added later).
+
+**Why Railway over Vercel**: equivalent for our needs (Next.js + Postgres), single subscription covers compute + DB, predictable monthly cost. Our codebase has zero Vercel coupling so the choice is reversible if needed.
 
 ## Why this stack
 
@@ -89,8 +91,7 @@ See [payments & checkout](./15-payments-and-checkout.md).
 - Konva vs Fabric — needs a prototype.
 - Paper.js vs Clipper vs hybrid — needs prototype with script fonts.
 - Drizzle vs Prisma — small preference for Drizzle; either works.
-- Vercel vs self-hosted — Vercel is fastest to ship; self-hosted is cheaper at scale. Start on Vercel.
-- Where to run the generation worker — depends on where Postgres ends up.
+- Where to run the generation worker — defaults to a second Railway service in the same project as the app + DB.
 
 ## Related
 

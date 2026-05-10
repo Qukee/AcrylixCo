@@ -1427,67 +1427,125 @@ git commit -m "feat(site): base layout with header, footer, hero placeholder"
 
 ---
 
-## Task 12: Vercel preview deployment
+## Task 12: Railway deployment
 
-This task requires (a) a GitHub remote and (b) a Vercel account, both of which the human owner must set up. The plan documents the steps; the engineer running this plan should hand the human owner this task list.
+The owner has an active Railway subscription. Railway hosts both the Next.js app and the Postgres database in one project, linked to the GitHub repo at https://github.com/Qukee/AcrylixCo. CI on GitHub Actions stays the same; Railway is just the host.
 
-**Files:** none in the repo — this is configuration on Vercel + GitHub.
+**Why not Vercel**: Owner preference. Our codebase has zero Vercel coupling — no `vercel.json`, no `@vercel/*` imports, all configuration is env-var driven, so there's nothing to migrate at the code level.
 
-- [ ] **Step 1: Create the GitHub repository (human task)**
+**Files:** code-side, the only change is the env example (replacing the unused `NEXTAUTH_URL` with the Auth.js v5 knobs Railway needs). Everything else is Railway dashboard configuration.
 
-Owner creates an empty private repo named `acrylixco` at github.com (no README, no `.gitignore`).
+- [ ] **Step 1: Repo state check**
 
-- [ ] **Step 2: Push the local repo**
+Repo is already pushed to https://github.com/Qukee/AcrylixCo (`origin/main` matches local).
 
 ```bash
-git remote add origin git@github.com:<owner>/acrylixco.git
-git push -u origin main
+git remote -v          # should show origin → https://github.com/Qukee/AcrylixCo.git
+git status             # should be clean
+git log origin/main --oneline | head -1
 ```
 
-Verify CI runs at github.com/<owner>/acrylixco/actions and passes.
+GitHub Actions CI runs automatically on every push and PR — verify the latest run is green at https://github.com/Qukee/AcrylixCo/actions before continuing.
 
-- [ ] **Step 3: Connect to Vercel (human task)**
+- [ ] **Step 2: Update env example for Auth.js v5 + non-Vercel host**
 
-1. Sign in to vercel.com.
-2. **Add New… → Project → Import** the `acrylixco` repo.
-3. **Root Directory:** `site` (important — the Next.js app is not at the repo root).
-4. **Framework Preset:** Next.js (auto-detected).
-5. **Environment Variables:** add `DATABASE_URL` (point at a Neon dev branch — see Step 4), `AUTH_SECRET`, `NEXTAUTH_URL` (will be `https://<vercel-preview-url>` or use Vercel's `VERCEL_URL`).
+Auth.js v5 uses `AUTH_SECRET` + `AUTH_URL` (the legacy `NEXTAUTH_URL` is v4). Outside Vercel, v5 also needs `AUTH_TRUST_HOST=true` to avoid the `UntrustedHost` error.
 
-- [ ] **Step 4: Provision a Neon dev database (human task)**
+Path: `site/.env.example` — replace contents with:
 
-1. Sign up at neon.tech.
-2. Create project `acrylixco`.
-3. Create branch `dev`.
-4. Copy connection string into Vercel's `DATABASE_URL` env var.
-5. From local: temporarily run `DATABASE_URL=<neon-string> npx drizzle-kit migrate` to apply the schema to the Neon db.
+```dotenv
+# Database (Railway injects this from the Postgres service via ${{Postgres.DATABASE_URL}})
+DATABASE_URL="postgresql://acrylixco:acrylixco_dev@localhost:5432/acrylixco"
 
-- [ ] **Step 5: Trigger a preview deploy**
+# Auth.js v5 (generate AUTH_SECRET with: openssl rand -base64 32)
+AUTH_SECRET=""
+# AUTH_URL is the public URL of the deployed app — Railway gives you *.up.railway.app
+AUTH_URL="http://localhost:3000"
+# Required outside Vercel (Railway, local dev) — Auth.js v5 won't trust the request host without it
+AUTH_TRUST_HOST="true"
+```
 
-Push any branch (not `main`) to GitHub. Vercel posts a preview URL on the PR. Verify:
+Update `site/.env.local` the same way (rename `NEXTAUTH_URL` → `AUTH_URL` and add `AUTH_TRUST_HOST=true`). `.env.local` is gitignored — do this manually.
 
-1. Home page renders the hero, header, footer.
-2. `/api/auth/session` returns `{}`.
-3. Vercel Functions logs show no errors.
+Commit:
 
-- [ ] **Step 6: Document URLs**
+```bash
+git add site/.env.example
+git commit -m "chore(env): switch to Auth.js v5 env names (AUTH_URL, AUTH_TRUST_HOST)"
+```
+
+- [ ] **Step 3: Create the Railway project (human task — Railway dashboard)**
+
+1. railway.app → **New Project** → **Deploy from GitHub repo** → select `Qukee/AcrylixCo`.
+2. Railway scans the repo. Because the Next.js app is at `site/`, configure the service:
+   - **Settings → Source → Root Directory**: `site`
+   - **Settings → Build → Build Command**: leave as Nixpacks default (`npm ci && npm run build`) — Nixpacks auto-detects Next.js.
+   - **Settings → Deploy → Start Command**: `npx drizzle-kit migrate && npm run start`
+     - The `drizzle-kit migrate` prefix runs the migration on every deploy. Idempotent — already-applied migrations are skipped.
+   - **Settings → Watch Paths**: `site/**` — so commits that only touch `Plan/` or `prototype-3d-preview/` don't trigger rebuilds.
+
+- [ ] **Step 4: Add a Postgres service**
+
+1. Inside the same Railway project: **+ New** → **Database** → **Add PostgreSQL**.
+2. Railway provisions a managed Postgres 16 instance with persistent volume. The service publishes an internal `DATABASE_URL` automatically.
+
+- [ ] **Step 5: Wire env vars on the Next.js service**
+
+In the Railway service settings (Next.js service, **Variables** tab):
+
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` — Railway variable reference, auto-resolves to the Postgres service's URL |
+| `AUTH_SECRET` | generate with `openssl rand -base64 32` and paste the result |
+| `AUTH_URL` | `https://${{RAILWAY_PUBLIC_DOMAIN}}` — Railway variable reference for the public hostname |
+| `AUTH_TRUST_HOST` | `true` |
+
+Railway "variable references" use the `${{Service.VAR}}` syntax and resolve at deploy time. They're more robust than copy-pasting a connection string.
+
+- [ ] **Step 6: Trigger the first deploy**
+
+Either click **Deploy** in the Railway dashboard, or push a trivial commit to `main`. Railway watches the repo and auto-deploys.
+
+The first deploy:
+1. Pulls the repo
+2. Runs `npm ci && npm run build` from `site/`
+3. Runs `npx drizzle-kit migrate` (creates `users`, `accounts`, `sessions`, `verification_tokens`, `__drizzle_migrations` on the Railway Postgres)
+4. Starts `next start` bound to `$PORT`
+
+Watch the deploy logs in the Railway dashboard. Build typically takes 2–4 minutes.
+
+- [ ] **Step 7: Verify**
+
+1. Visit `https://<your-app>.up.railway.app/` — should show the hero, header, footer.
+2. Visit `https://<your-app>.up.railway.app/api/auth/session` — should return HTTP 200 with body `null` (no `UntrustedHost` error if `AUTH_TRUST_HOST=true` is set).
+3. In Railway Postgres → **Data** tab, confirm the four tables exist.
+
+- [ ] **Step 8: PR / branch previews (optional)**
+
+Railway supports per-PR environments on Pro plans. To enable:
+
+1. Project → **Settings → Environments → PR Environments → Enable**.
+2. Each PR gets its own environment with copied env vars (and optionally a copied Postgres branch). Useful but not required for Phase 0.
+
+If skipped, all branches deploy on the main environment when their commits land — this is fine for a small team.
+
+- [ ] **Step 9: Document the environment URLs**
 
 Update `README.md` (root) with:
 
 ```markdown
 ## Environments
 
-- **Production:** _not yet deployed (Phase 7)_
-- **Preview:** every branch → preview URL on the PR
-- **Database:** Neon `dev` branch (preview), local Postgres via Docker (development)
-- **CI:** GitHub Actions on every PR
+- **Production**: https://<your-app>.up.railway.app — auto-deploys on push to `main`
+- **CI**: GitHub Actions runs lint + typecheck + unit + e2e on every push and PR
+- **Database**: Railway-managed Postgres (production), local Postgres via Homebrew (development)
 ```
 
-- [ ] **Step 7: Commit + push**
+Commit:
 
 ```bash
 git add README.md
-git commit -m "docs: document preview environments"
+git commit -m "docs: document Railway production environment"
 git push
 ```
 
