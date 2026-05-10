@@ -5,6 +5,7 @@ import { ProductGrid } from '@/components/site/ProductGrid';
 import { TrustStrip } from '@/components/site/TrustStrip';
 import { HowItWorks } from '@/components/site/HowItWorks';
 import { ShopTheLook } from '@/components/site/ShopTheLook';
+import { HeroShowcaseClient } from '@/components/site/HeroShowcaseClient';
 import {
   getFeaturedProducts,
   getOccasionCategories,
@@ -27,24 +28,34 @@ export default async function HomePage() {
   return (
     <>
       <section className="border-b border-cream-300/60">
-        <Container className="py-20 md:py-32">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-500">
-            Sydney studio · since 2024
-          </p>
-          <h1 className="mt-3 max-w-4xl font-serif text-5xl italic leading-[1.05] md:text-7xl">
-            Your name. Cast in light, layered in colour, made to last.
-          </h1>
-          <p className="mt-6 max-w-xl text-ink-700 md:text-lg">
-            Design your piece in 3D, see it from every angle, then we&rsquo;ll laser-cut
-            and ship it from our Sydney studio in 7–10 days.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Button href="/customize" size="lg">
-              Design yours in 3D
-            </Button>
-            <Button href="/shop" size="lg" variant="ghost">
-              Browse the studio
-            </Button>
+        <Container className="py-20 md:py-28">
+          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-500">
+                Sydney studio · since 2024
+              </p>
+              <h1 className="mt-3 font-serif text-5xl italic leading-[1.05] md:text-7xl">
+                Your name. Cast in light, layered in colour, made to last.
+              </h1>
+              <p className="mt-6 max-w-xl text-ink-700 md:text-lg">
+                Design your piece in 3D, see it from every angle, then we&rsquo;ll laser-cut
+                and ship it from our Sydney studio in 7–10 days.
+              </p>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Button href="/customize" size="lg">
+                  Design yours in 3D
+                </Button>
+                <Button href="/shop" size="lg" variant="ghost">
+                  Browse the studio
+                </Button>
+              </div>
+            </div>
+            <div className="relative">
+              <HeroShowcaseClient />
+              <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500">
+                Live 3D · drag to rotate at <span className="text-ink-700">/customize</span>
+              </p>
+            </div>
           </div>
         </Container>
       </section>

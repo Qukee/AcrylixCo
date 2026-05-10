@@ -1,0 +1,226 @@
+/*
+ * Motion graphics for the "How it works" section. Three lightweight inline-SVG
+ * animations driven by CSS keyframes — no JS, no Lottie. Each loop is paused
+ * for users who request reduced motion.
+ */
+
+/* ---------------- Step 01 — Design in 3D ---------------- */
+/*
+ * A plaque silhouette pivots gently on the Y axis (perspective comes from the
+ * parent SVG transform). The "Alex" letterform inside is drawn with
+ * stroke-dasharray, so it appears to ink itself onto the surface.
+ */
+.hiw-plaque {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: hiw-plaque-spin 7s ease-in-out infinite;
+}
+
+.hiw-plaque-text {
+  fill: none;
+  stroke: var(--color-accent-dark, #a99868);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: hiw-text-draw 7s ease-in-out infinite;
+}
+
+@keyframes hiw-plaque-spin {
+  0%,
+  100% {
+    transform: perspective(380px) rotateY(-14deg);
+  }
+  50% {
+    transform: perspective(380px) rotateY(14deg);
+  }
+}
+
+@keyframes hiw-text-draw {
+  0% {
+    stroke-dashoffset: 240;
+  }
+  35%,
+  85% {
+    stroke-dashoffset: 0;
+  }
+  95%,
+  100% {
+    stroke-dashoffset: 240;
+  }
+}
+
+/* ---------------- Step 02 — Confirm and order ---------------- */
+/*
+ * A receipt with three body lines and a checkmark that draws in once per
+ * cycle. Body lines fade in sequentially before the tick.
+ */
+.hiw-receipt-line {
+  opacity: 0;
+  animation: hiw-line-fade 6s ease-in-out infinite;
+}
+
+.hiw-receipt-line-1 {
+  animation-delay: 0.3s;
+}
+.hiw-receipt-line-2 {
+  animation-delay: 0.6s;
+}
+.hiw-receipt-line-3 {
+  animation-delay: 0.9s;
+}
+
+.hiw-tick {
+  fill: none;
+  stroke: var(--color-accent-dark, #a99868);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: hiw-tick-draw 6s ease-in-out infinite;
+}
+
+@keyframes hiw-line-fade {
+  0%,
+  10% {
+    opacity: 0;
+  }
+  20%,
+  85% {
+    opacity: 1;
+  }
+  95%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hiw-tick-draw {
+  0%,
+  35% {
+    stroke-dashoffset: 60;
+  }
+  55%,
+  85% {
+    stroke-dashoffset: 0;
+  }
+  95%,
+  100% {
+    stroke-dashoffset: 60;
+  }
+}
+
+/* ---------------- Step 03 — Laser-cut and shipped ---------------- */
+/*
+ * A laser scan line crosses the acrylic outline from left to right. Once the
+ * cut finishes, a small package icon glides across the same path to suggest
+ * dispatch.
+ */
+.hiw-laser {
+  animation: hiw-laser-sweep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.hiw-laser-glow {
+  animation: hiw-laser-glow 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.hiw-package {
+  opacity: 0;
+  animation: hiw-package-glide 6s ease-in-out infinite;
+}
+
+.hiw-cut-fill {
+  transform-origin: left center;
+  transform-box: fill-box;
+  animation: hiw-cut-reveal 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes hiw-laser-sweep {
+  0% {
+    transform: translateX(-4px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  60% {
+    transform: translateX(76px);
+    opacity: 1;
+  }
+  65%,
+  100% {
+    transform: translateX(76px);
+    opacity: 0;
+  }
+}
+
+@keyframes hiw-laser-glow {
+  0%,
+  10%,
+  65%,
+  100% {
+    opacity: 0;
+  }
+  30%,
+  55% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes hiw-cut-reveal {
+  0%,
+  5% {
+    transform: scaleX(0);
+  }
+  60% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes hiw-package-glide {
+  0%,
+  68% {
+    transform: translateX(-22px);
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  92% {
+    transform: translateX(82px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(82px);
+    opacity: 0;
+  }
+}
+
+/* ---------------- Reduced motion ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hiw-plaque,
+  .hiw-plaque-text,
+  .hiw-receipt-line,
+  .hiw-tick,
+  .hiw-laser,
+  .hiw-laser-glow,
+  .hiw-package,
+  .hiw-cut-fill {
+    animation: none;
+  }
+  .hiw-plaque-text,
+  .hiw-tick {
+    stroke-dashoffset: 0;
+  }
+  .hiw-receipt-line {
+    opacity: 1;
+  }
+  .hiw-cut-fill {
+    transform: scaleX(1);
+  }
+}
