@@ -4,6 +4,7 @@ import { useEffect, useState, useDeferredValue } from 'react';
 import Scene from '@/designer/scene/Scene';
 import ControlPanel from '@/designer/ui/ControlPanel';
 import LoadingOverlay from '@/designer/ui/LoadingOverlay';
+import { StepIndicator } from '@/components/site/StepIndicator';
 import { TEST_PIECES } from '@/designer/geometry/pieces';
 import { MATERIAL_CATALOG } from '@/designer/materials/catalog';
 import type { DesignerState, PieceSpec, PieceGeometry } from '@/designer/types';
@@ -27,13 +28,16 @@ export default function Designer() {
   const piece = TEST_PIECES.find((p) => p.id === pieceId) ?? FIRST_PIECE;
 
   return (
-    <div className="designer-root">
-      <DesignerForPiece
-        key={piece.id}
-        piece={piece}
-        pieceId={pieceId}
-        onPieceChange={setPieceId}
-      />
+    <div className="designer-root flex h-full flex-col">
+      <StepIndicator />
+      <div className="relative flex-1">
+        <DesignerForPiece
+          key={piece.id}
+          piece={piece}
+          pieceId={pieceId}
+          onPieceChange={setPieceId}
+        />
+      </div>
     </div>
   );
 }
