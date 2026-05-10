@@ -28,9 +28,9 @@ export default function Designer() {
   const piece = TEST_PIECES.find((p) => p.id === pieceId) ?? FIRST_PIECE;
 
   return (
-    <div className="designer-root flex h-full flex-col">
+    <>
       <StepIndicator />
-      <div className="relative flex-1">
+      <div className="designer-root">
         <DesignerForPiece
           key={piece.id}
           piece={piece}
@@ -38,7 +38,7 @@ export default function Designer() {
           onPieceChange={setPieceId}
         />
       </div>
-    </div>
+    </>
   );
 }
 
