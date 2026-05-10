@@ -74,6 +74,10 @@ export default async function ShopSlugPage({ params }: RouteParams) {
           }}
         />
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-500">
+          <Link href="/" className="hover:text-ink-900">
+            Studio
+          </Link>
+          {' / '}
           <Link href="/shop" className="hover:text-ink-900">
             Shop
           </Link>

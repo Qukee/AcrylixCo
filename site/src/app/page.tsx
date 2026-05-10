@@ -56,8 +56,8 @@ export default async function HomePage() {
         <Container className="py-16 md:py-24">
           <SectionTitle
             eyebrow="Featured"
-            title="Made for moments worth keeping."
-            description="Our most-requested pieces, ready to ship or be made-to-order in your colours."
+            title="Pieces our studio is making this week."
+            description="A live look at the templates we&rsquo;re laser-cutting right now. Buy as-is, or open the designer and make it yours."
           />
           <div className="mt-12">
             <ProductGrid products={featured} />
