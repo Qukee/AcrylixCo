@@ -3,7 +3,7 @@ import Link from 'next/link';
 export function Header() {
   return (
     <header className="border-cream-300/60 border-b">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
           <span
             aria-hidden
@@ -15,17 +15,32 @@ export function Header() {
             AcrylixCo
           </span>
         </Link>
-        <nav className="text-ink-700 flex items-center gap-6 font-mono text-xs tracking-[0.14em] uppercase">
+        <nav className="text-ink-700 hidden items-center gap-6 font-mono text-xs uppercase tracking-[0.14em] md:flex">
           <Link href="/shop" className="hover:text-ink-900">
             Shop
           </Link>
-          <Link href="/customize" className="hover:text-ink-900">
-            Customize
+          <Link href="/shop/cake-toppers" className="hover:text-ink-900">
+            Cake toppers
+          </Link>
+          <Link href="/shop/personal-milestones" className="hover:text-ink-900">
+            Wedding &amp; baby
           </Link>
           <Link href="/about" className="hover:text-ink-900">
-            About
+            Studio
+          </Link>
+          <Link
+            href="/customize"
+            className="border-cream-400 text-ink-900 hover:bg-cream-50 rounded-full border px-4 py-1.5 transition-colors"
+          >
+            Customize
           </Link>
         </nav>
+        <Link
+          href="/customize"
+          className="border-cream-400 text-ink-900 hover:bg-cream-50 inline-flex rounded-full border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] md:hidden"
+        >
+          Customize
+        </Link>
       </div>
     </header>
   );
