@@ -5,6 +5,7 @@ import { Container } from '@/components/site/Container';
 import { Button } from '@/components/site/Button';
 import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
+import { StructuredData } from '@/components/site/StructuredData';
 import { CategorySidebar } from '../CategorySidebar';
 import {
   getAllCategories,
@@ -53,6 +54,23 @@ export default async function ShopSlugPage({ params }: RouteParams) {
     const { product, images, categories } = result;
     return (
       <Container className="py-16 md:py-24">
+        <StructuredData
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            description: product.description,
+            image: images.map((i) => i.url),
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'AUD',
+              price: (product.priceCents / 100).toFixed(2),
+              availability: product.inStock
+                ? 'https://schema.org/InStock'
+                : 'https://schema.org/PreOrder',
+            },
+          }}
+        />
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-500">
           <Link href="/shop" className="hover:text-ink-900">
             Shop

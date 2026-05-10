@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Fraunces, JetBrains_Mono } from 'next/font/google';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
+import { StructuredData } from '@/components/site/StructuredData';
 import './globals.css';
 
 const sans = Bricolage_Grotesque({
@@ -31,6 +32,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
       <body className="flex min-h-screen flex-col">
+        <StructuredData
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'AcrylixCo',
+            url: 'https://acrylixco-production.up.railway.app',
+            description:
+              'Custom-made multi-layered acrylic pieces for life events. Designed in Sydney.',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Sydney',
+              addressCountry: 'AU',
+            },
+          }}
+        />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
