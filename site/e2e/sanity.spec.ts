@@ -6,7 +6,7 @@ test('home page loads with hero, featured products, footer', async ({ page }) =>
     /Your name|Cast in light/,
   );
   await expect(page.getByRole('navigation')).toBeVisible();
-  await expect(page.getByText('AcrylixCo · Sydney, Australia')).toBeVisible();
+  await expect(page.getByText(/AcrylixCo · ABN coming soon/)).toBeVisible();
   // Featured product links resolve into /shop/:slug.
   const productLinks = page.locator('a[href^="/shop/"]');
   await expect(productLinks.first()).toBeVisible();
