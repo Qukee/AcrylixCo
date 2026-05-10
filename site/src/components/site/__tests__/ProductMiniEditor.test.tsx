@@ -36,28 +36,27 @@ describe('ProductMiniEditor', () => {
     expect(svg).toHaveAttribute('aria-label', expect.stringContaining('Zara'));
   });
 
-  it('toggles aria-pressed on a foreground swatch when clicked', () => {
+  it('opens the primary colour picker and lets the user select a swatch', () => {
     render(<ProductMiniEditor product={baseProduct} categories={[]} />);
-    // Terracotta swatch starts unselected (Matte ink is the default).
-    const terracotta = screen.getByRole('button', {
-      name: 'Foreground colour: Terracotta',
-    });
-    expect(terracotta).toHaveAttribute('aria-pressed', 'false');
+    const trigger = screen.getByRole('button', { expanded: false, name: /matte ink/i });
+    fireEvent.click(trigger);
+    const terracotta = screen.getByRole('option', { name: 'Terracotta' });
+    expect(terracotta).toHaveAttribute('aria-selected', 'false');
     fireEvent.click(terracotta);
-    expect(terracotta).toHaveAttribute('aria-pressed', 'true');
-    const matteInk = screen.getByRole('button', {
-      name: 'Foreground colour: Matte ink',
-    });
-    expect(matteInk).toHaveAttribute('aria-pressed', 'false');
+    // After selection, the picker collapses and the trigger label updates.
+    expect(
+      screen.queryByRole('button', { expanded: true }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /terracotta/i })).toBeInTheDocument();
   });
 
-  it('writes the customization to localStorage when Add to cart is clicked', () => {
+  it('writes the customization (with font) to localStorage when Add to cart is clicked', () => {
     render(<ProductMiniEditor product={baseProduct} categories={[]} />);
-    // Pick a non-default terracotta foreground so we can assert the chosen colour
-    // landed in the saved payload.
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Foreground colour: Terracotta' }),
-    );
+
+    // Pick a non-default font so we can assert the chosen typeface lands in the payload.
+    const fontSelect = screen.getByLabelText('Font') as HTMLSelectElement;
+    fireEvent.change(fontSelect, { target: { value: 'script' } });
+
     const addBtn = screen.getByRole('button', { name: /add my custom piece/i });
     fireEvent.click(addBtn);
 
@@ -67,10 +66,8 @@ describe('ProductMiniEditor', () => {
     expect(cart.items).toHaveLength(1);
     expect(cart.items[0].productSlug).toBe('mia-heart-baby');
     expect(cart.items[0].customization.text).toBe('Mia');
-    expect(cart.items[0].customization.foreground.toLowerCase()).toBe('#b77b5e');
+    expect(cart.items[0].customization.font).toBe('script');
     expect(cart.items[0].qty).toBe(1);
-
-    // Button copy flips to a confirmation state.
     expect(addBtn.textContent).toMatch(/added to cart/i);
   });
 });

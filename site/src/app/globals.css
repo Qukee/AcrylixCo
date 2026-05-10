@@ -45,3 +45,30 @@ body {
   color: var(--color-ink-900);
   font-family: var(--font-sans);
 }
+
+/*
+ * Catalogue display fonts. Loaded from /public/fonts so the PDP mini editor
+ * can let shoppers swap typeface live without bloating the global font
+ * bundle — these are not used by the rest of the site.
+ */
+@font-face {
+  font-family: 'AcxAnton';
+  src: url('/fonts/Anton-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AcxDMSerif';
+  src: url('/fonts/DMSerifDisplay-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AcxGreatVibes';
+  src: url('/fonts/GreatVibes-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
