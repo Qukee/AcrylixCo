@@ -14,7 +14,7 @@ The high-level roadmap (which phases exist, in what order, why) is in [`../22-im
 
 | Phase | Status | Plan |
 | --- | --- | --- |
-| 0 — Foundations | **Done locally + pushed to GitHub** (Tasks 1–11 + repo on origin). [Task 12 (Railway)](./phase-0-foundations.md#task-12-railway-deployment) needs human action — see notes below. | [`phase-0-foundations.md`](./phase-0-foundations.md) |
+| 0 — Foundations | **✅ DONE — live at https://acrylixco-production.up.railway.app** | [`phase-0-foundations.md`](./phase-0-foundations.md) |
 | 1 — Designer migration | Not yet planned | _will be written after Phase 0's remote bits land_ |
 | 2 — Storefront | Not yet planned | _will be written after Phase 1 ships_ |
 | 3 — Commerce | Not yet planned | _will be written after Phase 2 ships_ |
@@ -35,18 +35,19 @@ The high-level roadmap (which phases exist, in what order, why) is in [`../22-im
 - Auth.js v5 (beta.31) with credentials provider + Drizzle adapter. `/api/auth/session` returns 200.
 - Base layout (Header / Footer) + "Coming soon" hero on `/`.
 
-**Pending (human action required, Railway dashboard):**
-- Create a Railway project from `Qukee/AcrylixCo`, set service Root Directory to `site`, Start Command to `npx drizzle-kit migrate && npm run start`.
-- Add a Postgres service in the same Railway project.
-- Set service env vars: `DATABASE_URL=${{Postgres.DATABASE_URL}}`, `AUTH_SECRET` (generated), `AUTH_URL=https://${{RAILWAY_PUBLIC_DOMAIN}}`, `AUTH_TRUST_HOST=true`.
-- Verify the deployed URL renders the hero and `/api/auth/session` returns 200.
+**Production deploy verified:**
+- https://acrylixco-production.up.railway.app/ → HTTP 200, hero renders
+- https://acrylixco-production.up.railway.app/api/auth/session → HTTP 200, `null` (no `UntrustedHost`)
+- Drizzle migrations applied to Railway-managed Postgres
+- Auto-deploys from `main` on push
 
 Steps are fully scripted in [`phase-0-foundations.md`](./phase-0-foundations.md#task-12-vercel-preview-deployment). They're marked human-only because they need accounts and credentials this build agent doesn't have.
 
 **Known follow-ups that surfaced during execution** (not blockers, addressed in later phases):
 - Next 16 deprecated `middleware.ts` in favour of `proxy.ts` — Auth.js v5 docs still use `middleware`. Rename when Auth.js docs catch up.
-- Auth.js dev shows `UntrustedHost` warning at `/api/auth/session` — fix by setting `AUTH_TRUST_HOST=true` for local dev when the login UI lands.
+- Auth.js `UntrustedHost` warning fixed in production via `AUTH_TRUST_HOST=true`. The `.env.local` template now includes it for local dev.
 - Multiple stray `package-lock.json` files in parent directories produce a workspace-root warning — set `turbopack.root` in `next.config.ts` to suppress.
+- Railway injects `PORT=8080` at runtime; the public domain target port must match. Set the start script to `next start -p ${PORT:-3000} -H 0.0.0.0` and the domain target port to 8080. Documented in [`phase-0-foundations.md`](./phase-0-foundations.md#task-12-railway-deployment).
 
 ## Where the prototype fits
 
