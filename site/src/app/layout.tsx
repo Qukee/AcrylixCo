@@ -4,6 +4,7 @@ import { Announcement } from '@/components/site/Announcement';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 import { StructuredData } from '@/components/site/StructuredData';
+import { FirstVisitPopup } from '@/components/site/FirstVisitPopup';
 import './globals.css';
 
 const sans = Bricolage_Grotesque({
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <FirstVisitPopup />
       </body>
     </html>
   );
