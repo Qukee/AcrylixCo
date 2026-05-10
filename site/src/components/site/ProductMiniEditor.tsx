@@ -3,7 +3,10 @@
 import { useState } from 'react';
 import { Container } from './Container';
 import { Button } from './Button';
+import { MiniScene3DClient } from './MiniScene3DClient';
 import type { ProductSummary } from '@/lib/catalog/queries';
+
+type PreviewMode = '2d' | '3d';
 
 export interface ProductMiniEditorProps {
   product: ProductSummary;
@@ -68,6 +71,7 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
   const [fontId, setFontId] = useState(defaultFont);
   const [open, setOpen] = useState<'primary' | 'secondary' | null>(null);
   const [added, setAdded] = useState(false);
+  const [mode, setMode] = useState<PreviewMode>('2d');
 
   const reset = () => {
     setText(defaultText);
@@ -188,51 +192,56 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
           {/* Preview column */}
           <div>
             <div className="relative aspect-[5/4] w-full overflow-hidden rounded-2xl border border-ink-700/70 bg-white">
-              <PreviewBackdrop />
               <p className="absolute left-5 top-4 z-10 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-500">
-                3D preview
+                {mode === '3d' ? '3D preview' : '2D preview'}
               </p>
-              <div className="absolute inset-0 grid place-items-center px-6">
-                <svg
-                  role="img"
-                  aria-label={ariaLabel}
-                  viewBox="0 0 400 200"
-                  className="block h-auto w-full max-w-[420px]"
-                  style={{ filter: 'drop-shadow(0 8px 22px rgba(0,0,0,0.12))' }}
-                >
-                  {/* Back layer — thick stroke = the offset-outline acrylic
-                      that peeks out around the foreground. */}
-                  <text
-                    x={200}
-                    y={100}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontFamily={font.family}
-                    fontStyle={font.italic ? 'italic' : 'normal'}
-                    fontSize={fontSize}
-                    fill={secondary}
-                    stroke={secondary}
-                    strokeWidth={18}
-                    strokeLinejoin="round"
-                    paintOrder="stroke"
+              <ModeToggle mode={mode} onChange={setMode} />
+              {mode === '2d' ? (
+                <div className="absolute inset-0 grid place-items-center px-6">
+                  <svg
+                    role="img"
+                    aria-label={ariaLabel}
+                    viewBox="0 0 400 200"
+                    className="block h-auto w-full max-w-[420px]"
+                    style={{ filter: 'drop-shadow(0 8px 22px rgba(0,0,0,0.12))' }}
                   >
-                    {text || defaultText}
-                  </text>
-                  {/* Front layer — the carved letters themselves. */}
-                  <text
-                    x={200}
-                    y={100}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontFamily={font.family}
-                    fontStyle={font.italic ? 'italic' : 'normal'}
-                    fontSize={fontSize}
-                    fill={primary}
-                  >
-                    {text || defaultText}
-                  </text>
-                </svg>
-              </div>
+                    <text
+                      x={200}
+                      y={100}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontFamily={font.family}
+                      fontStyle={font.italic ? 'italic' : 'normal'}
+                      fontSize={fontSize}
+                      fill={secondary}
+                      stroke={secondary}
+                      strokeWidth={18}
+                      strokeLinejoin="round"
+                      paintOrder="stroke"
+                    >
+                      {text || defaultText}
+                    </text>
+                    <text
+                      x={200}
+                      y={100}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontFamily={font.family}
+                      fontStyle={font.italic ? 'italic' : 'normal'}
+                      fontSize={fontSize}
+                      fill={primary}
+                    >
+                      {text || defaultText}
+                    </text>
+                  </svg>
+                </div>
+              ) : (
+                <MiniScene3DClient
+                  text={text || defaultText}
+                  primaryHex={primary}
+                  secondaryHex={secondary}
+                />
+              )}
             </div>
             <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-500">
               {product.materialsSummary.split(',')[0]?.trim()} · auto-updates as you customise
@@ -389,37 +398,39 @@ function Squiggle() {
   );
 }
 
-function PreviewBackdrop() {
-  // Two dotted rings that hint at the piece rotating in 3D space, lifted
-  // straight from the user's mockup. Pure decoration.
+interface ModeToggleProps {
+  mode: PreviewMode;
+  onChange: (m: PreviewMode) => void;
+}
+
+function ModeToggle({ mode, onChange }: ModeToggleProps) {
   return (
-    <svg
-      aria-hidden
-      viewBox="0 0 600 480"
-      preserveAspectRatio="xMidYMid meet"
-      className="absolute inset-0 h-full w-full text-cream-300"
+    <div
+      role="tablist"
+      aria-label="Preview mode"
+      className="absolute right-4 top-3 z-10 inline-flex overflow-hidden rounded-full border border-cream-300 bg-white shadow-sm"
     >
-      <ellipse
-        cx={300}
-        cy={240}
-        rx={210}
-        ry={170}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeDasharray="2 8"
-      />
-      <ellipse
-        cx={300}
-        cy={240}
-        rx={210}
-        ry={70}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeDasharray="2 8"
-      />
-    </svg>
+      {(['2d', '3d'] as const).map((m) => {
+        const active = mode === m;
+        return (
+          <button
+            key={m}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            aria-label={`${m.toUpperCase()} preview`}
+            onClick={() => onChange(m)}
+            className={`px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
+              active
+                ? 'bg-terracotta-500 text-white'
+                : 'text-ink-700 hover:bg-cream-50'
+            }`}
+          >
+            {m}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
