@@ -14,12 +14,39 @@ The high-level roadmap (which phases exist, in what order, why) is in [`../22-im
 
 | Phase | Status | Plan |
 | --- | --- | --- |
-| 0 — Foundations | Ready to execute | [`phase-0-foundations.md`](./phase-0-foundations.md) |
-| 1 — Designer migration | Not yet planned | _will be written after Phase 0 ships_ |
+| 0 — Foundations | **Done locally** (Tasks 1–11). [Task 12 (Vercel/GitHub/Neon)](./phase-0-foundations.md#task-12-vercel-preview-deployment) needs human action — see notes below. | [`phase-0-foundations.md`](./phase-0-foundations.md) |
+| 1 — Designer migration | Not yet planned | _will be written after Phase 0's remote bits land_ |
 | 2 — Storefront | Not yet planned | _will be written after Phase 1 ships_ |
 | 3 — Commerce | Not yet planned | _will be written after Phase 2 ships_ |
 | 4 — Admin | Not yet planned | _will be written after Phase 3 ships_ |
 | 5 — Quality & launch | Not yet planned | _will be written after Phase 4 ships_ |
+
+## Phase 0 — what's done, what's pending
+
+**Done locally (15 commits on `main`):**
+- Git repo initialized; existing planning + prototype committed.
+- Next.js 16 + React 19 + Tailwind v4 scaffold at `site/` (with strict TypeScript).
+- AcrylixCo theme tokens (cream / ink / accent) + self-hosted fonts (Bricolage Grotesque / Fraunces / JetBrains Mono).
+- Prettier + ESLint flat config + Husky pre-commit hook (lint-staged + tsc on every commit).
+- Vitest unit tests + Playwright E2E with sanity tests passing.
+- GitHub Actions CI workflow file (`.github/workflows/ci.yml`) — runs once pushed.
+- Local Postgres 16 via Homebrew with `acrylixco` role/db.
+- Drizzle ORM + Auth.js compatible schema (`users`, `accounts`, `sessions`, `verification_tokens`) with first migration applied.
+- Auth.js v5 (beta.31) with credentials provider + Drizzle adapter. `/api/auth/session` returns 200.
+- Base layout (Header / Footer) + "Coming soon" hero on `/`.
+
+**Pending (human action required):**
+- Push the repo to GitHub (`git remote add origin … && git push -u origin main`).
+- Connect the GitHub repo to Vercel (Root Directory: `site`).
+- Provision a Neon `dev` Postgres branch, set Vercel env vars (`DATABASE_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`), apply the Drizzle migration to Neon.
+- Verify a preview URL renders and `/api/auth/session` returns 200.
+
+Steps are fully scripted in [`phase-0-foundations.md`](./phase-0-foundations.md#task-12-vercel-preview-deployment). They're marked human-only because they need accounts and credentials this build agent doesn't have.
+
+**Known follow-ups that surfaced during execution** (not blockers, addressed in later phases):
+- Next 16 deprecated `middleware.ts` in favour of `proxy.ts` — Auth.js v5 docs still use `middleware`. Rename when Auth.js docs catch up.
+- Auth.js dev shows `UntrustedHost` warning at `/api/auth/session` — fix by setting `AUTH_TRUST_HOST=true` for local dev when the login UI lands.
+- Multiple stray `package-lock.json` files in parent directories produce a workspace-root warning — set `turbopack.root` in `next.config.ts` to suppress.
 
 ## Where the prototype fits
 
