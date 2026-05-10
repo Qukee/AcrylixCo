@@ -1,0 +1,43 @@
+# Build Plans
+
+Execution plans for actually building the AcrylixCo site. Architecture and requirements live in [`../`](../README.md) — this directory is *how* we build, not *what*.
+
+## Approach
+
+We build in phases. Each phase produces working, demoable software. We plan one phase in detail, execute it, demo, then plan the next phase with whatever we learned.
+
+This is intentional. The alternative — planning all seven phases up front — produces a document that's stale before it's done and brittle to anything we discover during execution.
+
+The high-level roadmap (which phases exist, in what order, why) is in [`../22-implementation-phases.md`](../22-implementation-phases.md). The individual phase plans below are the bite-sized execution detail.
+
+## Phase plans
+
+| Phase | Status | Plan |
+| --- | --- | --- |
+| 0 — Foundations | Ready to execute | [`phase-0-foundations.md`](./phase-0-foundations.md) |
+| 1 — Designer migration | Not yet planned | _will be written after Phase 0 ships_ |
+| 2 — Storefront | Not yet planned | _will be written after Phase 1 ships_ |
+| 3 — Commerce | Not yet planned | _will be written after Phase 2 ships_ |
+| 4 — Admin | Not yet planned | _will be written after Phase 3 ships_ |
+| 5 — Quality & launch | Not yet planned | _will be written after Phase 4 ships_ |
+
+## Where the prototype fits
+
+[`../../prototype-3d-preview/`](../../prototype-3d-preview/) is a working Vite-based prototype of the 3D designer. It validated the riskiest piece (offset-outline geometry + material rendering + mobile perf) without the cost of full site infrastructure.
+
+Phase 0 does **not** touch the prototype. It scaffolds the production Next.js app in a new directory `site/`. Phase 1 ports the prototype's geometry, materials, scene, and UI primitives into the production app.
+
+After Phase 1 ships, the prototype directory can be deleted (it'll be redundant). Until then, it stays on disk as reference and a working demo.
+
+## Conventions
+
+- **TDD where applicable** — feature work uses red/green/refactor. Setup tasks (install X, configure Y) use "do, verify, commit" instead.
+- **Frequent commits** — every numbered task ends with a commit. No giant "phase 0 done" commits.
+- **Exact file paths and commands** — plans assume an engineer with no project context. They should be able to follow the steps without asking.
+- **No placeholders** — every step shows the actual content needed.
+
+## Related
+
+- [`../22-implementation-phases.md`](../22-implementation-phases.md) — phase rationale and ordering
+- [`../21-tech-stack.md`](../21-tech-stack.md) — technology choices each phase builds on
+- [`../23-constraints-and-quality.md`](../23-constraints-and-quality.md) — quality bar every phase has to clear
