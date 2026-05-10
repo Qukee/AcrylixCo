@@ -3,6 +3,7 @@ import { Button } from '@/components/site/Button';
 import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
 import { TrustStrip } from '@/components/site/TrustStrip';
+import { HowItWorks } from '@/components/site/HowItWorks';
 import { getFeaturedProducts, getAllCategories } from '@/lib/catalog/queries';
 import Link from 'next/link';
 
@@ -40,6 +41,8 @@ export default async function HomePage() {
       </section>
 
       <TrustStrip />
+
+      <HowItWorks />
 
       <section>
         <Container className="py-16 md:py-24">
