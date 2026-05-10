@@ -16,23 +16,23 @@ export default async function HomePage() {
   return (
     <>
       <section className="border-b border-cream-300/60">
-        <Container className="py-20 md:py-28">
+        <Container className="py-20 md:py-32">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-500">
-            Sydney · since 2024
+            Sydney studio · since 2024
           </p>
-          <h1 className="mt-3 max-w-3xl font-serif text-5xl italic leading-[1.05] md:text-7xl">
-            Made-to-order acrylic decor for life&rsquo;s occasions.
+          <h1 className="mt-3 max-w-4xl font-serif text-5xl italic leading-[1.05] md:text-7xl">
+            Your name. Cast in light, layered in colour, made to last.
           </h1>
           <p className="mt-6 max-w-xl text-ink-700 md:text-lg">
-            Multi-layered, laser-cut pieces designed in Sydney. Pick from our shop, or design
-            your own — every piece manufactured to order.
+            Design your piece in 3D, see it from every angle, then we&rsquo;ll laser-cut
+            and ship it from our Sydney studio in 7–10 days.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Button href="/shop" size="lg">
-              Browse the shop
+            <Button href="/customize" size="lg">
+              Design yours in 3D
             </Button>
-            <Button href="/customize" size="lg" variant="ghost">
-              Design your own
+            <Button href="/shop" size="lg" variant="ghost">
+              Browse the studio
             </Button>
           </div>
         </Container>
