@@ -1,0 +1,41 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build output
+dist
+.next
+out
+build
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Editors / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+
+# Test artifacts
+coverage
+.nyc_output
+playwright-report
+test-results
+.playwright-mcp
+
+# Database
+*.db
+postgres-data/
+
+# Screenshots
+/*.png
+
+# Misc
+*.log
+.cache
+.turbo
