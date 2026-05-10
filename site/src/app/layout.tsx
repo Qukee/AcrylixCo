@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Fraunces, JetBrains_Mono } from 'next/font/google';
+import { Announcement } from '@/components/site/Announcement';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 import { StructuredData } from '@/components/site/StructuredData';
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             },
           }}
         />
+        <Announcement />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
