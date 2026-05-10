@@ -1,26 +1,36 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Theme tokens. Tailwind v4 reads `@theme` blocks at build time and emits the
+ * corresponding utilities (e.g. `bg-cream-100`, `text-ink-900`, `font-serif`).
+ * Source: https://tailwindcss.com/docs/theme
+ */
+@theme {
+  /* Fonts — backed by next/font CSS variables, set on <html> in layout.tsx */
+  --font-sans: var(--font-sans-family), system-ui, sans-serif;
+  --font-serif: var(--font-serif-family), Georgia, serif;
+  --font-mono: var(--font-mono-family), ui-monospace, monospace;
+
+  /* Cream — warm neutral storefront base */
+  --color-cream-50: #faf6ec;
+  --color-cream-100: #f3ede0;
+  --color-cream-200: #ece5d3;
+  --color-cream-300: #dcd3bd;
+  --color-cream-400: #c8c2b3;
+
+  /* Ink — text on cream */
+  --color-ink-900: #2c2920;
+  --color-ink-700: #5a564d;
+  --color-ink-500: #8a8472;
+
+  /* Accent — gold, matches prototype */
+  --color-accent: #d6c294;
+  --color-accent-dark: #a99868;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream-100);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
 }
