@@ -5,7 +5,6 @@ import { ProductGrid } from '@/components/site/ProductGrid';
 import { TrustStrip } from '@/components/site/TrustStrip';
 import { HowItWorks } from '@/components/site/HowItWorks';
 import { ShopTheLook } from '@/components/site/ShopTheLook';
-import { HeroShowcaseClient } from '@/components/site/HeroShowcaseClient';
 import {
   getFeaturedProducts,
   getOccasionCategories,
@@ -27,34 +26,47 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="border-b border-cream-300/60">
-        <Container className="py-20 md:py-28">
-          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-500">
-                Sydney studio · since 2024
-              </p>
-              <h1 className="mt-3 font-serif text-5xl italic leading-[1.05] md:text-7xl">
-                Your name. Cast in light, layered in colour, made to last.
-              </h1>
-              <p className="mt-6 max-w-xl text-ink-700 md:text-lg">
-                Design your piece in 3D, see it from every angle, then we&rsquo;ll laser-cut
-                and ship it from our Sydney studio in 7–10 days.
-              </p>
-              <div className="mt-10 flex flex-wrap gap-4">
-                <Button href="/customize" size="lg">
-                  Design yours in 3D
-                </Button>
-                <Button href="/shop" size="lg" variant="ghost">
-                  Browse the studio
-                </Button>
-              </div>
-            </div>
-            <div className="relative">
-              <HeroShowcaseClient />
-              <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500">
-                Live 3D · drag to rotate at <span className="text-ink-700">/customize</span>
-              </p>
+      <section className="relative isolate overflow-hidden border-b border-cream-300/60">
+        {/*
+          Full-bleed hero: editorial photograph behind the headline. The image
+          is a placeholder from Unsplash (CC0) — replace with our own
+          studio shoot in Phase 2.7.
+        */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/hero/stationery-flatlay.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Tonal wash + left-side gradient so the type stays legible on any crop. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cream-100/30"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-r from-cream-50/95 via-cream-50/70 to-transparent md:from-cream-50/95 md:via-cream-50/55 md:to-cream-50/0"
+        />
+        <Container className="relative py-24 md:py-40">
+          <div className="max-w-2xl">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-700">
+              Sydney studio · since 2024
+            </p>
+            <h1 className="mt-3 font-serif text-5xl italic leading-[1.05] text-ink-900 md:text-7xl">
+              Your name. Cast in light, layered in colour, made to last.
+            </h1>
+            <p className="mt-6 max-w-xl text-ink-700 md:text-lg">
+              Design your piece in 3D, see it from every angle, then we&rsquo;ll laser-cut
+              and ship it from our Sydney studio in 7–10 days.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Button href="/customize" size="lg">
+                Design yours in 3D
+              </Button>
+              <Button href="/shop" size="lg" variant="ghost">
+                Browse the studio
+              </Button>
             </div>
           </div>
         </Container>
