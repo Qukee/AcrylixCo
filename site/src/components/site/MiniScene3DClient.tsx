@@ -19,6 +19,8 @@ interface MiniScene3DClientProps {
   text: string;
   primaryHex: string;
   secondaryHex: string;
+  fontUrl: string;
+  borderWidthMm: number;
 }
 
 export function MiniScene3DClient(props: MiniScene3DClientProps) {

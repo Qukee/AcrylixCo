@@ -23,7 +23,14 @@ interface FontOption {
   label: string;
   family: string;
   italic?: boolean;
+  // Local .ttf URL the 3D engine parses to build glyph geometry. Every font
+  // exposed to the shopper needs one so the 2D and 3D previews stay in sync.
+  url: string;
 }
+
+const BORDER_MIN = 2;
+const BORDER_MAX = 14;
+const BORDER_DEFAULT = 6;
 
 // Primary (foreground) — the top acrylic layer that carries the letterform.
 const PRIMARY_SWATCHES: Swatch[] = [
@@ -49,12 +56,31 @@ const SECONDARY_SWATCHES: Swatch[] = [
   { hex: '#dcd3bd', label: 'Cream' },
 ];
 
+// Every option ships a local .ttf so the 3D engine can build its geometry
+// from the same source the 2D preview renders via @font-face. Fraunces /
+// Bricolage (the site-wide Google Fonts) live as web-font CSS only, so
+// they're deliberately excluded — exposing them would mean the 3D mode
+// silently fell back to a different typeface.
 const FONT_OPTIONS: FontOption[] = [
-  { id: 'serif', label: 'Serif italic', family: 'var(--font-serif)', italic: true },
-  { id: 'sans', label: 'Modern sans', family: 'var(--font-sans)' },
-  { id: 'display', label: 'Display serif', family: 'AcxDMSerif, Georgia, serif' },
-  { id: 'bold-sans', label: 'Bold sans', family: 'AcxAnton, Impact, sans-serif' },
-  { id: 'script', label: 'Flowing script', family: 'AcxGreatVibes, cursive' },
+  {
+    id: 'display',
+    label: 'Display serif',
+    family: 'AcxDMSerif, Georgia, serif',
+    url: '/fonts/DMSerifDisplay-Regular.ttf',
+  },
+  {
+    id: 'bold-sans',
+    label: 'Bold sans',
+    family: 'AcxAnton, Impact, sans-serif',
+    url: '/fonts/Anton-Regular.ttf',
+  },
+  {
+    id: 'script',
+    label: 'Flowing script',
+    family: 'AcxGreatVibes, cursive',
+    italic: true,
+    url: '/fonts/GreatVibes-Regular.ttf',
+  },
 ];
 
 const CART_KEY = 'acx_cart_v1';
@@ -69,6 +95,7 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
   const [primary, setPrimary] = useState(defaultPrimary);
   const [secondary, setSecondary] = useState(defaultSecondary);
   const [fontId, setFontId] = useState(defaultFont);
+  const [borderWidth, setBorderWidth] = useState(BORDER_DEFAULT);
   const [open, setOpen] = useState<'primary' | 'secondary' | null>(null);
   const [added, setAdded] = useState(false);
   const [mode, setMode] = useState<PreviewMode>('2d');
@@ -78,6 +105,7 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
     setPrimary(defaultPrimary);
     setSecondary(defaultSecondary);
     setFontId(defaultFont);
+    setBorderWidth(BORDER_DEFAULT);
     setOpen(null);
     setAdded(false);
   };
@@ -93,6 +121,7 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
         foreground: primary,
         base: secondary,
         font: fontId,
+        borderWidthMm: borderWidth,
       },
       qty: 1,
     });
@@ -170,6 +199,28 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
                   }}
                 />
               </Row>
+
+              {/* Dimensions — border width slider */}
+              <Row label="Dimensions">
+                <div className="flex w-full items-center gap-4">
+                  <span className="font-serif text-xl italic text-ink-900">
+                    Border width
+                  </span>
+                  <input
+                    type="range"
+                    min={BORDER_MIN}
+                    max={BORDER_MAX}
+                    step={1}
+                    value={borderWidth}
+                    onChange={(e) => setBorderWidth(parseInt(e.target.value, 10))}
+                    aria-label="Border width in millimetres"
+                    className="flex-1 accent-terracotta-500"
+                  />
+                  <span className="font-mono text-xs uppercase tracking-[0.14em] text-ink-700 tabular-nums">
+                    {borderWidth} mm
+                  </span>
+                </div>
+              </Row>
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
@@ -215,7 +266,7 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
                       fontSize={fontSize}
                       fill={secondary}
                       stroke={secondary}
-                      strokeWidth={18}
+                      strokeWidth={borderWidth * 3}
                       strokeLinejoin="round"
                       paintOrder="stroke"
                     >
@@ -240,12 +291,11 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
                   text={text || defaultText}
                   primaryHex={primary}
                   secondaryHex={secondary}
+                  fontUrl={font.url}
+                  borderWidthMm={borderWidth}
                 />
               )}
             </div>
-            <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-500">
-              {product.materialsSummary.split(',')[0]?.trim()} · auto-updates as you customise
-            </p>
           </div>
         </div>
       </Container>
@@ -450,7 +500,13 @@ interface CartItem {
   productSlug: string;
   productName: string;
   priceCents: number;
-  customization: { text: string; foreground: string; base: string; font: string };
+  customization: {
+    text: string;
+    foreground: string;
+    base: string;
+    font: string;
+    borderWidthMm: number;
+  };
   qty: number;
   addedAt: number;
 }

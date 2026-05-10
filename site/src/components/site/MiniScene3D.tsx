@@ -5,7 +5,11 @@ import Scene from '@/designer/scene/Scene';
 import { TEST_PIECES } from '@/designer/geometry/pieces';
 import { buildPieceGeometry } from '@/designer/geometry/buildPieceGeometry';
 import { MATERIAL_CATALOG } from '@/designer/materials/catalog';
-import type { DesignerState, PieceGeometry } from '@/designer/types';
+import type {
+  DesignerState,
+  PieceGeometry,
+  PieceSpec,
+} from '@/designer/types';
 
 // "Alex" — single-line bold sans plaque. Universal template for the mini
 // preview, regardless of which product page mounts the editor; the user
@@ -16,9 +20,17 @@ interface MiniScene3DProps {
   text: string;
   primaryHex: string;
   secondaryHex: string;
+  fontUrl: string;
+  borderWidthMm: number;
 }
 
-export function MiniScene3D({ text, primaryHex, secondaryHex }: MiniScene3DProps) {
+export function MiniScene3D({
+  text,
+  primaryHex,
+  secondaryHex,
+  fontUrl,
+  borderWidthMm,
+}: MiniScene3DProps) {
   // Defer geometry rebuilds while the user types so the canvas doesn't
   // re-thrash on every keystroke. React 19 schedules these as non-urgent.
   const deferredText = useDeferredValue(text);
@@ -30,9 +42,23 @@ export function MiniScene3D({ text, primaryHex, secondaryHex }: MiniScene3DProps
     [deferredText],
   );
 
+  // Clone the template with the user's chosen font URL on the text layer
+  // so opentype.js parses the right glyphs at geometry-build time.
+  const piece: PieceSpec = useMemo(
+    () => ({
+      ...TEMPLATE,
+      layers: TEMPLATE.layers.map((l) =>
+        l.content.type === 'text'
+          ? { ...l, content: { ...l.content, fontUrl } }
+          : l,
+      ),
+    }),
+    [fontUrl],
+  );
+
   useEffect(() => {
     let cancelled = false;
-    buildPieceGeometry(TEMPLATE, TEMPLATE.defaults.borderThicknessMm, customText)
+    buildPieceGeometry(piece, borderWidthMm, customText)
       .then((g) => {
         if (!cancelled) setGeometry(g);
       })
@@ -43,27 +69,27 @@ export function MiniScene3D({ text, primaryHex, secondaryHex }: MiniScene3DProps
     return () => {
       cancelled = true;
     };
-  }, [customText]);
+  }, [piece, borderWidthMm, customText]);
 
   const state: DesignerState = useMemo(
     () => ({
       viewMode: '3d',
-      borderThicknessMm: TEMPLATE.defaults.borderThicknessMm,
+      borderThicknessMm: borderWidthMm,
       layerMaterials: {
         base: nearestMaterialId(secondaryHex),
         foreground: nearestMaterialId(primaryHex),
       },
       customText,
       glowMode: 'day',
-      autoRotate: true,
+      autoRotate: false,
       showStats: false,
     }),
-    [primaryHex, secondaryHex, customText],
+    [primaryHex, secondaryHex, customText, borderWidthMm],
   );
 
   return (
     <div className="absolute inset-0">
-      <Scene piece={TEMPLATE} geometry={geometry} state={state} />
+      <Scene piece={piece} geometry={geometry} state={state} />
     </div>
   );
 }
