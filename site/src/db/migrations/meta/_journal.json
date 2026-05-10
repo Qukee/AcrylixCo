@@ -8,6 +8,13 @@
       "when": 1778373829667,
       "tag": "0000_loud_hellfire_club",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778382859201,
+      "tag": "0001_chunky_lila_cheney",
+      "breakpoints": true
     }
   ]
 }
