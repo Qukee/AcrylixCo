@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     'Browse our pre-made multi-layered acrylic pieces — name plaques, monograms, ornaments, and more.',
 };
 
+// Hits the DB at render time. See site/src/app/page.tsx for context.
+export const dynamic = 'force-dynamic';
+
 export default async function ShopPage() {
   const [products, categories] = await Promise.all([getAllProducts(), getAllCategories()]);
 

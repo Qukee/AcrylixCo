@@ -1,6 +1,11 @@
 import type { MetadataRoute } from 'next';
 import { getAllProducts, getAllCategories } from '@/lib/catalog/queries';
 
+// Sitemap hits the DB. Railway doesn't inject env vars at Docker build time —
+// without `force-dynamic`, the build tries to prerender this and crashes on
+// the placeholder DATABASE_URL.
+export const dynamic = 'force-dynamic';
+
 const BASE_URL = process.env.AUTH_URL ?? 'https://acrylixco-production.up.railway.app';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -5,6 +5,11 @@ import { ProductGrid } from '@/components/site/ProductGrid';
 import { getFeaturedProducts, getAllCategories } from '@/lib/catalog/queries';
 import Link from 'next/link';
 
+// Page hits the DB. Railway doesn't inject env vars at Docker build time —
+// without `force-dynamic`, the build crashes prerendering against the
+// placeholder DATABASE_URL.
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const [featured, cats] = await Promise.all([getFeaturedProducts(4), getAllCategories()]);
 
