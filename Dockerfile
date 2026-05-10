@@ -42,4 +42,7 @@ COPY --from=builder /app/site/next.config.ts ./next.config.ts
 EXPOSE 3000
 
 # Apply migrations, then start. Migrations are idempotent.
-CMD ["sh", "-c", "npx drizzle-kit migrate && npm run start"]
+# We tolerate migration failures (e.g. when DATABASE_URL isn't yet wired) so
+# the app still comes up — auth routes will fail until DB is reachable, but
+# the home page renders, which makes diagnosis straightforward.
+CMD ["sh", "-c", "echo 'PORT=' $PORT; echo 'DATABASE_URL prefix=' $(printf %s \"$DATABASE_URL\" | cut -c1-30); (npx drizzle-kit migrate || echo 'WARN: drizzle-kit migrate failed — continuing'); exec npm run start"]
