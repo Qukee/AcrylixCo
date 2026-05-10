@@ -15,6 +15,13 @@
       "when": 1778382859201,
       "tag": "0001_chunky_lila_cheney",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778391648556,
+      "tag": "0002_lethal_lucky_pierre",
+      "breakpoints": true
     }
   ]
 }

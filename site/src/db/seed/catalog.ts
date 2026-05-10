@@ -28,11 +28,18 @@ interface SeedProduct {
 }
 
 const SEED_CATEGORIES = [
-  { id: 'cat-personal', slug: 'personal-milestones', name: 'Personal milestones', sortOrder: 1 },
-  { id: 'cat-public', slug: 'public-holidays', name: 'Public holidays', sortOrder: 2 },
-  { id: 'cat-religious', slug: 'religious-holidays', name: 'Religious holidays', sortOrder: 3 },
-  { id: 'cat-corporate', slug: 'corporate-gifts', name: 'Corporate gifts', sortOrder: 4 },
-  { id: 'cat-home', slug: 'home-decor', name: 'Home decor', sortOrder: 5 },
+  // Occasions — who/why you're buying.
+  { id: 'cat-personal', slug: 'personal-milestones', name: 'Personal milestones', kind: 'occasion' as const, sortOrder: 1 },
+  { id: 'cat-public', slug: 'public-holidays', name: 'Public holidays', kind: 'occasion' as const, sortOrder: 2 },
+  { id: 'cat-religious', slug: 'religious-holidays', name: 'Religious holidays', kind: 'occasion' as const, sortOrder: 3 },
+  { id: 'cat-corporate', slug: 'corporate-gifts', name: 'Corporate gifts', kind: 'occasion' as const, sortOrder: 4 },
+  { id: 'cat-home', slug: 'home-decor', name: 'Home decor', kind: 'occasion' as const, sortOrder: 5 },
+  // Product types — what you're buying.
+  { id: 'type-name-plaque', slug: 'name-plaques', name: 'Name plaques', kind: 'product_type' as const, sortOrder: 10 },
+  { id: 'type-cake-topper', slug: 'cake-toppers', name: 'Cake toppers', kind: 'product_type' as const, sortOrder: 11 },
+  { id: 'type-mirror', slug: 'mirrors', name: 'Mirrors', kind: 'product_type' as const, sortOrder: 12 },
+  { id: 'type-door-sign', slug: 'door-signs', name: 'Door signs', kind: 'product_type' as const, sortOrder: 13 },
+  { id: 'type-ornament', slug: 'ornaments', name: 'Ornaments', kind: 'product_type' as const, sortOrder: 14 },
 ];
 
 // Procedurally-generated SVG placeholder images (data URLs) so the storefront
@@ -67,7 +74,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Cream matte over gold mirror · 5 mm acrylic',
     imageUrl: placeholderImage('Aisha', '#d6b769'),
     imageAlt: '"Aisha\'s First Eid" multi-layer acrylic name plaque',
-    categoryIds: ['cat-religious', 'cat-personal'],
+    categoryIds: ['cat-religious', 'cat-personal', 'type-name-plaque'],
   },
   {
     id: 'prod-olivia-frame',
@@ -81,7 +88,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'White matte over silver mirror · 5 mm acrylic',
     imageUrl: placeholderImage('Olivia', '#c8c8d0'),
     imageAlt: '"Olivia" circular acrylic name frame',
-    categoryIds: ['cat-personal', 'cat-home'],
+    categoryIds: ['cat-personal', 'cat-home', 'type-mirror'],
   },
   {
     id: 'prod-mia-heart',
@@ -95,7 +102,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Dusty pink matte heart, white gloss text, silver mirror base · 5 mm acrylic',
     imageUrl: placeholderImage('Mia', '#d3a4a4'),
     imageAlt: '"Mia" heart-shaped multi-layer acrylic plaque',
-    categoryIds: ['cat-personal'],
+    categoryIds: ['cat-personal', 'type-name-plaque'],
   },
   {
     id: 'prod-yusuf-bilingual',
@@ -109,7 +116,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Black mirror over rose gold mirror · 5 mm acrylic',
     imageUrl: placeholderImage('Yusuf 雨石', '#15161a'),
     imageAlt: '"Yusuf 雨石" bilingual stacked acrylic plaque',
-    categoryIds: ['cat-personal'],
+    categoryIds: ['cat-personal', 'type-name-plaque'],
   },
   {
     id: 'prod-mj-monogram',
@@ -123,7 +130,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Cream matte over gold mirror · 6 mm acrylic',
     imageUrl: placeholderImage('M & J', '#d6b769'),
     imageAlt: '"M & J" wedding monogram acrylic centerpiece',
-    categoryIds: ['cat-personal', 'cat-home'],
+    categoryIds: ['cat-personal', 'cat-home', 'type-name-plaque'],
   },
   {
     id: 'prod-snowflake-set',
@@ -137,7 +144,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Frosted clear · 3 mm acrylic',
     imageUrl: placeholderImage('Snowflakes', '#dde1e3'),
     imageAlt: 'Set of three frosted acrylic snowflake ornaments',
-    categoryIds: ['cat-public', 'cat-home'],
+    categoryIds: ['cat-public', 'cat-home', 'type-ornament'],
   },
   {
     id: 'prod-easter-egg-name',
@@ -150,7 +157,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Baby blue matte over cream matte · 4 mm acrylic',
     imageUrl: placeholderImage('Easter', '#b6c8d6'),
     imageAlt: 'Easter egg-shaped acrylic name plaque',
-    categoryIds: ['cat-public', 'cat-personal'],
+    categoryIds: ['cat-public', 'cat-personal', 'type-name-plaque'],
   },
   {
     id: 'prod-rangoli-diwali',
@@ -164,7 +171,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Gold mirror · 5 mm acrylic',
     imageUrl: placeholderImage('Diwali', '#d6b769'),
     imageAlt: 'Diwali rangoli mandala acrylic wall piece',
-    categoryIds: ['cat-religious', 'cat-home'],
+    categoryIds: ['cat-religious', 'cat-home', 'type-ornament'],
   },
   {
     id: 'prod-corporate-mia-daniel',
@@ -178,7 +185,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Black matte over silver mirror · 5 mm acrylic',
     imageUrl: placeholderImage('Mia & Daniel', '#c8c8d0'),
     imageAlt: 'Corporate name plaque example "Mia & Daniel"',
-    categoryIds: ['cat-corporate'],
+    categoryIds: ['cat-corporate', 'type-name-plaque'],
   },
   {
     id: 'prod-best-dad',
@@ -192,7 +199,7 @@ const SEED_PRODUCTS: SeedProduct[] = [
     materialsSummary: 'Black matte over gold mirror · 5 mm acrylic',
     imageUrl: placeholderImage('Best Dad', '#d6b769'),
     imageAlt: '"Best Dad" Father\'s Day acrylic plaque',
-    categoryIds: ['cat-public'],
+    categoryIds: ['cat-public', 'type-name-plaque'],
   },
 ];
 

@@ -6,6 +6,10 @@ export const categories = pgTable('categories', {
   slug: text('slug').notNull().unique(),
   name: text('name').notNull(),
   description: text('description'),
+  /** 'occasion' (existing) or 'product_type'. Drives the dual-axis homepage taxonomy. */
+  kind: text('kind', { enum: ['occasion', 'product_type'] })
+    .notNull()
+    .default('occasion'),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });

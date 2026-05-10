@@ -118,6 +118,36 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
   return Promise.all(rows.map(buildSummary));
 }
 
+export async function getOccasionCategories(): Promise<CategorySummary[]> {
+  const rows = await db
+    .select()
+    .from(categories)
+    .where(eq(categories.kind, 'occasion'))
+    .orderBy(asc(categories.sortOrder));
+  return rows.map((c) => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    description: c.description,
+    sortOrder: c.sortOrder,
+  }));
+}
+
+export async function getProductTypeCategories(): Promise<CategorySummary[]> {
+  const rows = await db
+    .select()
+    .from(categories)
+    .where(eq(categories.kind, 'product_type'))
+    .orderBy(asc(categories.sortOrder));
+  return rows.map((c) => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    description: c.description,
+    sortOrder: c.sortOrder,
+  }));
+}
+
 export async function getAllCategories(): Promise<CategorySummary[]> {
   const rows = await db.select().from(categories).orderBy(asc(categories.sortOrder));
   return rows.map((c) => ({

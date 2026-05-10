@@ -4,7 +4,11 @@ import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
 import { TrustStrip } from '@/components/site/TrustStrip';
 import { HowItWorks } from '@/components/site/HowItWorks';
-import { getFeaturedProducts, getAllCategories } from '@/lib/catalog/queries';
+import {
+  getFeaturedProducts,
+  getOccasionCategories,
+  getProductTypeCategories,
+} from '@/lib/catalog/queries';
 import Link from 'next/link';
 
 // Page hits the DB. Railway doesn't inject env vars at Docker build time —
@@ -13,7 +17,11 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [featured, cats] = await Promise.all([getFeaturedProducts(4), getAllCategories()]);
+  const [featured, occasions, productTypes] = await Promise.all([
+    getFeaturedProducts(4),
+    getOccasionCategories(),
+    getProductTypeCategories(),
+  ]);
 
   return (
     <>
@@ -57,20 +65,47 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <section className="border-y border-cream-300/60 bg-cream-50">
+      <section>
         <Container className="py-16 md:py-24">
-          <SectionTitle eyebrow="Browse" title="By the moment you&rsquo;re celebrating." />
-          <ul className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {cats.map((c) => (
+          <SectionTitle
+            eyebrow="Browse"
+            title="By the piece you&rsquo;re looking for."
+          />
+          <ul className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+            {productTypes.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/shop/${c.slug}`}
                   className="block rounded-md border border-cream-300/60 bg-cream-100 p-6 transition-colors hover:border-cream-400 hover:bg-cream-50"
                 >
                   <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-500">
-                    Category
+                    Product
                   </p>
-                  <h3 className="mt-2 font-serif text-2xl italic">{c.name}</h3>
+                  <h3 className="mt-2 font-serif text-xl italic">{c.name}</h3>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <section className="border-y border-cream-300/60 bg-cream-50">
+        <Container className="py-16 md:py-24">
+          <SectionTitle
+            eyebrow="Browse"
+            title="By who you&rsquo;re celebrating."
+          />
+          <ul className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+            {occasions.map((c) => (
+              <li key={c.id}>
+                <Link
+                  href={`/shop/${c.slug}`}
+                  className="block rounded-md border border-cream-300/60 bg-cream-50 p-6 transition-colors hover:border-cream-400"
+                >
+                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-500">
+                    Occasion
+                  </p>
+                  <h3 className="mt-2 font-serif text-xl italic">{c.name}</h3>
                 </Link>
               </li>
             ))}
