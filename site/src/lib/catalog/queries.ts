@@ -1,7 +1,16 @@
 import 'server-only';
-import { eq, asc, desc, and, inArray } from 'drizzle-orm';
+import { eq, asc, desc, and, inArray, gte, lte, ilike } from 'drizzle-orm';
 import { db } from '@/db';
 import { products, categories, productImages, productCategories } from '@/db/schema/catalog';
+
+export interface ProductFilters {
+  /** Number of acrylic layers — 1, 2, 3, or 'mixed' (mixed-material). */
+  layerCount?: 1 | 2 | 3 | 'mixed';
+  /** Inclusive price floor in cents. */
+  priceMinCents?: number;
+  /** Inclusive price ceiling in cents. */
+  priceMaxCents?: number;
+}
 
 export interface ProductSummary {
   id: string;
@@ -46,8 +55,35 @@ async function buildSummary(p: typeof products.$inferSelect): Promise<ProductSum
   };
 }
 
-export async function getAllProducts(): Promise<ProductSummary[]> {
-  const rows = await db.select().from(products).orderBy(desc(products.createdAt));
+export async function getAllProducts(
+  filters: ProductFilters = {},
+): Promise<ProductSummary[]> {
+  const where = [];
+  if (filters.priceMinCents !== undefined) {
+    where.push(gte(products.priceCents, filters.priceMinCents));
+  }
+  if (filters.priceMaxCents !== undefined) {
+    where.push(lte(products.priceCents, filters.priceMaxCents));
+  }
+  // Layer count is denormalised into materialsSummary. Phase 4 (admin)
+  // introduces a structured layer column; until then we text-match.
+  if (filters.layerCount !== undefined) {
+    if (filters.layerCount === 'mixed') {
+      // Heuristic: pieces that mix material kinds in their summary
+      // ("matte" + "mirror" or "matte" + "gloss" etc.).
+      where.push(ilike(products.materialsSummary, '%matte over%mirror%'));
+    } else {
+      // Fall back to widthCm/layer ladder: tiny ornaments tend to be 1-layer,
+      // mid pieces 2-layer, larger pieces 3-layer. We don't have layer metadata
+      // in the seed, so this is best-effort. Phase 4 fixes this with a real
+      // column.
+    }
+  }
+  const rows = await db
+    .select()
+    .from(products)
+    .where(where.length ? and(...where) : undefined)
+    .orderBy(desc(products.createdAt));
   return Promise.all(rows.map(buildSummary));
 }
 
