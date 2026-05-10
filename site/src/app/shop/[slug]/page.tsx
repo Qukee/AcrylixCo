@@ -109,13 +109,72 @@ export default async function ShopSlugPage({ params }: RouteParams) {
             <div className="mt-8 flex flex-wrap gap-3">
               <Button size="lg">Add to cart</Button>
               <Button href="/customize" size="lg" variant="ghost">
-                Customize this design
+                See it in 3D in your name
               </Button>
             </div>
 
-            <p className="mt-6 font-mono text-xs uppercase tracking-[0.14em] text-ink-500">
-              Made to order · ships from Sydney in 7–10 days
-            </p>
+            <dl className="mt-8 grid grid-cols-2 gap-4 border-y border-cream-300/60 py-6 md:grid-cols-4">
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
+                  Made to order
+                </dt>
+                <dd className="mt-1 font-serif text-base italic text-ink-900">
+                  For you, not from a shelf
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
+                  Dispatch
+                </dt>
+                <dd className="mt-1 font-serif text-base italic text-ink-900">7–10 days</dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
+                  Shipping
+                </dt>
+                <dd className="mt-1 font-serif text-base italic text-ink-900">
+                  Tracked AU-wide
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
+                  Rush option
+                </dt>
+                <dd className="mt-1 font-serif text-base italic text-ink-900">
+                  +$30 · 3–5 days
+                </dd>
+              </div>
+            </dl>
+
+            <details className="mt-8 border-t border-cream-300/60 pt-6">
+              <summary className="cursor-pointer font-mono text-xs uppercase tracking-[0.18em] text-ink-700 hover:text-ink-900">
+                Materials &amp; dimensions
+              </summary>
+              <dl className="mt-4 space-y-3 text-sm">
+                <div>
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">
+                    Materials
+                  </dt>
+                  <dd className="font-serif italic text-ink-900">
+                    {product.materialsSummary}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">
+                    Approx. width
+                  </dt>
+                  <dd className="font-serif italic text-ink-900">{product.widthCm} cm</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">
+                    Hardware
+                  </dt>
+                  <dd className="font-serif italic text-ink-900">
+                    Tabletop stand included
+                  </dd>
+                </div>
+              </dl>
+            </details>
           </div>
         </div>
       </Container>
