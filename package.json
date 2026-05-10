@@ -1,0 +1,20 @@
+{
+  "name": "acrylixco",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "lint:site": "cd site && npm run lint",
+    "format:site": "cd site && npm run format:check",
+    "typecheck:site": "cd site && npm run typecheck"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
+  },
+  "lint-staged": {
+    "site/src/**/*.{ts,tsx,js,jsx,css}": [
+      "cd site && npx prettier --write"
+    ]
+  }
+}

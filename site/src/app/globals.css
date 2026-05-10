@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
  * Theme tokens. Tailwind v4 reads `@theme` blocks at build time and emits the

@@ -22,8 +22,7 @@ const mono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'AcrylixCo — Custom acrylic decor',
-  description:
-    'Custom-made multi-layered acrylic pieces for life events. Designed in Sydney.',
+  description: 'Custom-made multi-layered acrylic pieces for life events. Designed in Sydney.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
