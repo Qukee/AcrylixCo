@@ -16,8 +16,9 @@ The high-level roadmap (which phases exist, in what order, why) is in [`../22-im
 | --- | --- | --- |
 | 0 — Foundations | **✅ DONE — live at https://acrylixco-production.up.railway.app** | [`phase-0-foundations.md`](./phase-0-foundations.md) |
 | 1 — Designer migration | **✅ DONE — `/customize` live, geometry tests pinning offset-outline** | [`phase-1-designer-migration.md`](./phase-1-designer-migration.md) |
-| 2 — Storefront | **✅ DONE — `/`, `/shop`, `/shop/[slug]` live with seeded catalog; SEO + content pages shipped** | [`phase-2-storefront.md`](./phase-2-storefront.md) |
-| 3 — Commerce | Not yet planned | _will be written after Phase 2 ships_ |
+| 2 — Storefront | **Code shipped, awaiting prod DB seed** | [`phase-2-storefront.md`](./phase-2-storefront.md) |
+| 2.5 — Refinement (research-driven) | **Awaiting owner review** | [`phase-2.5-refinement.md`](./phase-2.5-refinement.md) (informed by [research](../research/2026-05-10-market-research.md)) |
+| 3 — Commerce | Not yet planned | _will be written after Phase 2.5 ships_ |
 | 4 — Admin | Not yet planned | _will be written after Phase 3 ships_ |
 | 5 — Quality & launch | Not yet planned | _will be written after Phase 4 ships_ |
 
