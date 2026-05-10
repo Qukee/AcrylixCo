@@ -15,7 +15,7 @@ The high-level roadmap (which phases exist, in what order, why) is in [`../22-im
 | Phase | Status | Plan |
 | --- | --- | --- |
 | 0 — Foundations | **✅ DONE — live at https://acrylixco-production.up.railway.app** | [`phase-0-foundations.md`](./phase-0-foundations.md) |
-| 1 — Designer migration | Not yet planned | _will be written after Phase 0's remote bits land_ |
+| 1 — Designer migration | **Ready to execute** | [`phase-1-designer-migration.md`](./phase-1-designer-migration.md) |
 | 2 — Storefront | Not yet planned | _will be written after Phase 1 ships_ |
 | 3 — Commerce | Not yet planned | _will be written after Phase 2 ships_ |
 | 4 — Admin | Not yet planned | _will be written after Phase 3 ships_ |
