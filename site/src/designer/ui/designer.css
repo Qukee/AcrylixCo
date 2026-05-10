@@ -1,0 +1,30 @@
+/*
+ * Designer-scoped design tokens.
+ *
+ * The prototype's UI CSS (ControlPanel.css, MaterialPicker.css,
+ * LoadingOverlay.css) references CSS variables like --bg-elev, --border-strong,
+ * --accent that were defined in the prototype's global index.css. The site's
+ * globals.css uses Tailwind v4 @theme tokens instead, so those variables don't
+ * exist in this scope.
+ *
+ * To keep the prototype's visual language self-contained without polluting the
+ * storefront, we scope the dark-panel / cream-canvas / accent-gold palette to
+ * the .designer-root class. Wrap the designer mount with
+ * <div className="designer-root">…</div> so all descendant styles resolve.
+ *
+ * Font variables (--font-sans, --font-serif, --font-mono) are NOT redefined
+ * here — they're emitted globally by Tailwind v4's @theme block in
+ * src/app/globals.css and resolve via the cascade.
+ */
+.designer-root {
+  --bg: #0c0c0e;
+  --bg-elev: #15161a;
+  --bg-elev-2: #1c1d22;
+  --border: #2a2c33;
+  --border-strong: #3a3d46;
+  --fg: #f5f3ee;
+  --fg-muted: #a4a39d;
+  --fg-dim: #6c6b66;
+  --accent: #d6c294;
+  --danger: #e07a5f;
+}
