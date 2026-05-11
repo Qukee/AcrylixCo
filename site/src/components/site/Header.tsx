@@ -23,28 +23,22 @@ export function Header() {
           <Link href="/shop/kids" className="hover:text-ink-900">
             Kids
           </Link>
+          <Link href="/shop/islamic" className="hover:text-ink-900">
+            Islamic
+          </Link>
           <Link href="/shop/gifts" className="hover:text-ink-900">
             Gifts
-          </Link>
-          <Link href="/about" className="hover:text-ink-900">
-            Studio
-          </Link>
-          <Link
-            href="/customize"
-            className="rounded-full bg-terracotta-500 px-4 py-1.5 text-white transition-colors hover:bg-terracotta-600"
-          >
-            Customize
           </Link>
           <CartIcon />
         </nav>
         <div className="flex items-center gap-3 md:hidden">
-          <CartIcon />
           <Link
-            href="/customize"
-            className="inline-flex rounded-full bg-terracotta-500 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-colors hover:bg-terracotta-600"
+            href="/shop"
+            className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-700"
           >
-            Customize
+            Shop
           </Link>
+          <CartIcon />
         </div>
       </div>
     </header>

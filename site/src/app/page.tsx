@@ -63,10 +63,7 @@ export default async function HomePage() {
               and ship it from our Sydney studio in 7–10 days.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              <Button href="/customize" size="lg">
-                Design yours in 3D
-              </Button>
-              <Button href="/shop" size="lg" variant="ghost">
+              <Button href="/shop" size="lg">
                 Browse the studio
               </Button>
             </div>
@@ -146,14 +143,14 @@ export default async function HomePage() {
       <section>
         <Container className="py-20 md:py-28 text-center">
           <SectionTitle
-            eyebrow="Customize"
-            title="Or design something one of a kind."
-            description="Pick a template, type the name, choose your finishes — see a 3D preview before you order."
+            eyebrow="Customise on the page"
+            title="Type your name. See it in 3D. Order."
+            description="Every piece is customised right on its product page — type your text, pick your colours, watch the 3D preview update, then add to cart."
             align="center"
           />
           <div className="mt-10 flex justify-center">
-            <Button href="/customize" size="lg">
-              Open the designer
+            <Button href="/shop" size="lg">
+              Browse the studio
             </Button>
           </div>
         </Container>

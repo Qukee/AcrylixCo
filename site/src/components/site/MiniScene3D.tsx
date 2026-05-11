@@ -128,7 +128,8 @@ export function MiniScene3D({
 
 // Pick the catalog material whose colour is closest to the user's chosen
 // hex in plain RGB-Euclidean space. Cheaper and good enough for a preview;
-// the full /customize designer is where exact materials get chosen.
+// when metafield-driven material selection lands, this nearest-match
+// fallback retires.
 function nearestMaterialId(hex: string): string {
   const target = hexToRgb(hex);
   if (!target) return MATERIAL_CATALOG[0]!.id;

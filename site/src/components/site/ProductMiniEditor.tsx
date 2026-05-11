@@ -260,9 +260,6 @@ export function ProductMiniEditor({
               <Button onClick={handleAddToCart} variant="primary" size="md" type="button">
                 {added ? 'Added to cart ✓' : 'Add my custom piece'}
               </Button>
-              <Button href="/customize" variant="ghost" size="md">
-                Customize in 3D →
-              </Button>
               <button
                 type="button"
                 onClick={reset}

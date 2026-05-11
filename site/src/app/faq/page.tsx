@@ -18,8 +18,8 @@ const FAQ = [
     a: 'We use cast acrylic in mirror, matte, frosted, gloss, glitter, neon, and clear finishes. Sheet thickness is typically 5 mm; smaller ornaments are 3 mm and larger pieces 6 mm.',
   },
   {
-    q: 'Can I customize the size, colours, or text?',
-    a: 'Yes. Use the customizer at /customize to design your own piece, or email us with details for a custom order based on a catalog template.',
+    q: 'Can I customise the size, colours, or text?',
+    a: 'Yes. Every product page has a built-in customiser — type your text, pick your colours, watch the 3D preview update, then add to cart. For pieces that fall outside the catalogue, email us with details and we can quote a custom order.',
   },
   {
     q: 'Do you ship internationally?',

@@ -54,7 +54,7 @@ export function HowItWorks() {
           ))}
         </ol>
         <div className="mt-10">
-          <Button href="/customize" size="lg">
+          <Button href="/shop" size="lg">
             Start your design
           </Button>
         </div>

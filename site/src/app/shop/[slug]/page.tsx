@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Container } from '@/components/site/Container';
-import { Button } from '@/components/site/Button';
 import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
 import { ProductGallery } from '@/components/site/ProductGallery';
@@ -71,6 +70,23 @@ function dispatchDate(): string {
   const d = new Date();
   d.setDate(d.getDate() + 8);
   return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+// Pick the 3D editor template that best mirrors the product the shopper is on.
+//   - 'big-letter' → an oversized serif initial with the name laid inside the
+//     counter (Big Letter Sign family, oval-frame favour tags).
+//   - 'plaque'     → single-line text on a clean plaque (everything else).
+// Mapping is explicit per Shopify product handle so we don't accidentally
+// fall back to the wrong style when adding products.
+const BIG_LETTER_HANDLES = new Set([
+  'big-letter-sign',
+  'olivia-circular-frame', // legacy
+  'big-initial-favour-tag',
+  'mini-initial-honey-favour',
+]);
+
+function editorTemplateFor(slug: string): 'plaque' | 'big-letter' {
+  return BIG_LETTER_HANDLES.has(slug) ? 'big-letter' : 'plaque';
 }
 
 export default async function ShopSlugPage({ params }: RouteParams) {
@@ -152,9 +168,6 @@ export default async function ShopSlugPage({ params }: RouteParams) {
 
             <div className="mt-6 flex flex-wrap gap-3">
               <AddToCartButton variantId={variantId} />
-              <Button href="/customize" size="lg" variant="ghost">
-                See it in 3D in your name
-              </Button>
             </div>
 
             {/* Multi-buy callout */}
@@ -245,11 +258,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
       <ProductMiniEditor
         product={product}
         categories={categories}
-        template={
-          product.slug === 'big-letter-sign' || product.slug === 'olivia-circular-frame'
-            ? 'big-letter'
-            : 'plaque'
-        }
+        template={editorTemplateFor(product.slug)}
         variantId={variantId}
       />
 
