@@ -62,15 +62,6 @@ function pdpReview(slug: string): { rating: number; count: number } {
   };
 }
 
-function pdpSpots(slug: string): number {
-  return 3 + (slugHash(slug) % 5);
-}
-
-function dispatchDate(): string {
-  const d = new Date();
-  d.setDate(d.getDate() + 8);
-  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
-}
 
 // Pick the 3D editor template that best mirrors the product the shopper is on.
 //   - 'big-letter' → an oversized serif initial with the name laid inside the
@@ -140,13 +131,9 @@ export default async function ShopSlugPage({ params }: RouteParams) {
 
           <div>
             <h1 className="font-serif text-4xl italic">{product.name}</h1>
-            <p className="mt-4 font-mono text-sm tracking-[0.14em] text-ink-500">
-              {product.materialsSummary} · {product.widthCm} cm wide
-            </p>
-            <p className="mt-6 text-ink-700 md:text-lg">{product.description}</p>
 
             {/* Review stars (synthesized) — replace with real reviews in Phase 4. */}
-            <div className="mt-6 flex items-center gap-3 font-mono text-[11px] text-ink-500">
+            <div className="mt-4 flex items-center gap-3 font-mono text-[11px] text-ink-500">
               <span aria-hidden className="text-terracotta-600 text-base">
                 ★★★★★
               </span>
@@ -157,100 +144,13 @@ export default async function ShopSlugPage({ params }: RouteParams) {
               </span>
             </div>
 
-            <p className="mt-8 font-serif text-3xl">{formatPrice(product.priceCents)} AUD</p>
+            <p className="mt-6 text-ink-700 md:text-lg">{product.description}</p>
 
-            {/* Stock urgency — synthesized from slug. Real value comes from the
-                production queue once the studio dashboard lands. */}
-            <p className="mt-3 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-terracotta-700">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-terracotta-600" />
-              Only {pdpSpots(product.slug)} spots left this week
-            </p>
+            <p className="mt-8 font-serif text-3xl">{formatPrice(product.priceCents)} AUD</p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <AddToCartButton variantId={variantId} />
             </div>
-
-            {/* Multi-buy callout */}
-            <div className="mt-6 flex items-start gap-3 rounded-md border border-terracotta-200 bg-terracotta-50 px-4 py-3">
-              <span aria-hidden className="mt-0.5 text-terracotta-700">
-                +
-              </span>
-              <p className="text-sm text-ink-700">
-                <span className="font-serif italic text-ink-900">
-                  Buy two pieces, save 10%
-                </span>{' '}
-                with code{' '}
-                <span className="rounded-sm bg-white px-1.5 py-0.5 font-mono text-[11px] uppercase tracking-[0.16em] text-terracotta-700 ring-1 ring-terracotta-200">
-                  DUO10
-                </span>{' '}
-                · perfect for matching wedding signage.
-              </p>
-            </div>
-
-            <dl className="mt-8 grid grid-cols-2 gap-4 border-y border-cream-200 py-6 md:grid-cols-4">
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
-                  Made to order
-                </dt>
-                <dd className="mt-1 font-serif text-base italic text-ink-900">
-                  For you, not from a shelf
-                </dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
-                  Dispatched by
-                </dt>
-                <dd className="mt-1 font-serif text-base italic text-ink-900">
-                  {dispatchDate()}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
-                  Shipping
-                </dt>
-                <dd className="mt-1 font-serif text-base italic text-ink-900">
-                  Tracked AU-wide
-                </dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
-                  Rush option
-                </dt>
-                <dd className="mt-1 font-serif text-base italic text-ink-900">
-                  +$30 · 3–5 days
-                </dd>
-              </div>
-            </dl>
-
-            <details className="mt-8 border-t border-cream-200 pt-6">
-              <summary className="cursor-pointer font-mono text-xs uppercase tracking-[0.18em] text-ink-700 hover:text-ink-900">
-                Materials &amp; dimensions
-              </summary>
-              <dl className="mt-4 space-y-3 text-sm">
-                <div>
-                  <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">
-                    Materials
-                  </dt>
-                  <dd className="font-serif italic text-ink-900">
-                    {product.materialsSummary}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">
-                    Approx. width
-                  </dt>
-                  <dd className="font-serif italic text-ink-900">{product.widthCm} cm</dd>
-                </div>
-                <div>
-                  <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">
-                    Hardware
-                  </dt>
-                  <dd className="font-serif italic text-ink-900">
-                    Tabletop stand included
-                  </dd>
-                </div>
-              </dl>
-            </details>
           </div>
         </div>
       </Container>
