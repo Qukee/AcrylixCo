@@ -36,6 +36,10 @@ postgres-data/
 # Screenshots
 /*.png
 
+# Raw asset inbox — originals live here, renamed/optimised copies ship
+# under site/public/products/* and are tracked.
+/Assets/
+
 # Misc
 *.log
 .cache
