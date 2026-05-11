@@ -22,7 +22,7 @@ if (!domain || !token) {
 
 export const storefront = createStorefrontApiClient({
   storeDomain: domain || 'placeholder.myshopify.com',
-  apiVersion: '2025-01',
+  apiVersion: '2026-04',
   publicAccessToken: token || 'placeholder-token',
 });
 
