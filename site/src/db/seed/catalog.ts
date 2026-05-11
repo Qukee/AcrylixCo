@@ -83,35 +83,35 @@ const SEED_PRODUCTS: SeedProduct[] = [
   {
     id: 'prod-olivia-frame',
     slug: 'olivia-circular-frame',
-    name: '"Olivia" Big Letter Sign',
+    name: 'Big Letter Sign',
     description:
-      'Our signature big-letter piece — a name set inside an oval ring of laser-cut acrylic, layered in two finishes. Made to hang above a crib or stand on a shelf.',
+      'Our signature big-letter piece — your name set inside an oval ring of laser-cut acrylic, layered in two finishes. Made to hang above a crib or stand on a shelf.',
     priceCents: 7200,
     widthCm: 38,
     featured: true,
     materialsSummary: 'Blush pink matte over ivory · 5 mm acrylic',
     imageUrl: '/products/big-letter-product/big-letter-studio-front.png',
-    imageAlt: '"Olivia" big letter sign — blush acrylic name inside an ivory oval ring',
+    imageAlt: 'Big Letter Sign — blush acrylic name inside an ivory oval (sample shows "Olivia")',
     additionalImages: [
       {
         url: '/products/big-letter-product/big-letter-lifestyle-shelf.png',
-        alt: '"Olivia" big letter sign styled on a wooden shelf with linen storage',
+        alt: 'Big Letter Sign styled on a wooden shelf with linen storage',
       },
       {
         url: '/products/big-letter-product/big-letter-lifestyle-hands.png',
-        alt: 'Hands placing the "Olivia" big letter sign onto a shelf — shows scale',
+        alt: 'Hands placing a Big Letter Sign onto a shelf — shows scale',
       },
       {
         url: '/products/big-letter-product/big-letter-flatlay-eucalyptus.png',
-        alt: '"Olivia" big letter sign flatlay on wood with eucalyptus sprig',
+        alt: 'Big Letter Sign flatlay on wood with eucalyptus sprig',
       },
       {
         url: '/products/big-letter-product/big-letter-nursery-crib.png',
-        alt: '"Olivia" big letter sign hanging above a baby cot in a pink nursery',
+        alt: 'Big Letter Sign hanging above a baby cot in a pink nursery',
       },
       {
         url: '/products/big-letter-product/big-letter-nursery-gallery.png',
-        alt: '"Olivia" big letter sign as part of a nursery gallery wall with woodland prints',
+        alt: 'Big Letter Sign as part of a nursery gallery wall with woodland prints',
       },
     ],
     categoryIds: ['cat-personal', 'cat-home', 'type-mirror'],
