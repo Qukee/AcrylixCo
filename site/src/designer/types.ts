@@ -31,7 +31,7 @@ export type LayerKind = 'base' | 'foreground' | 'accent';
  */
 export type LayerContent =
   | { type: 'text'; text: string; fontUrl: string; fontSize: number }
-  | { type: 'shape'; shape: 'heart'; size: number };
+  | { type: 'shape'; shape: 'heart' | 'circle'; size: number };
 
 export interface LayerSpec {
   id: string;

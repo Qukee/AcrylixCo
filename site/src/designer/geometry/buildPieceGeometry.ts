@@ -10,6 +10,7 @@ import { loadFont } from './fontCache';
 import { textToShapes } from './textToShapes';
 import { offsetOutlineFromShapes } from './offsetOutline';
 import { heartShape } from './heartShape';
+import { circleShape } from './circleShape';
 
 /**
  * Build the resolved geometry for a piece, in millimetre coordinates.
@@ -105,6 +106,9 @@ async function resolveContent(content: LayerContent): Promise<Shape[]> {
   }
   if (content.type === 'shape' && content.shape === 'heart') {
     return [heartShape(content.size)];
+  }
+  if (content.type === 'shape' && content.shape === 'circle') {
+    return [circleShape(content.size)];
   }
   throw new Error(`Unsupported layer content: ${JSON.stringify(content)}`);
 }

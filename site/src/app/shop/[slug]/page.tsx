@@ -66,6 +66,9 @@ function pdpReview(slug: string): { rating: number; count: number } {
 // Pick the 3D editor template that best mirrors the product the shopper is on.
 //   - 'big-letter' → an oversized serif initial with the name laid inside the
 //     counter (Big Letter Sign family, oval-frame favour tags).
+//   - 'coaster'    → a round disc with a centred name (Eid round plaques /
+//     coasters). Dimensions slider is hidden — only colours, text and font
+//     are editable.
 //   - 'plaque'     → single-line text on a clean plaque (everything else).
 // Mapping is explicit per Shopify product handle so we don't accidentally
 // fall back to the wrong style when adding products.
@@ -76,8 +79,12 @@ const BIG_LETTER_HANDLES = new Set([
   'mini-initial-honey-favour',
 ]);
 
-function editorTemplateFor(slug: string): 'plaque' | 'big-letter' {
-  return BIG_LETTER_HANDLES.has(slug) ? 'big-letter' : 'plaque';
+const COASTER_HANDLES = new Set(['first-eid-round-plaque']);
+
+function editorTemplateFor(slug: string): 'plaque' | 'big-letter' | 'coaster' {
+  if (BIG_LETTER_HANDLES.has(slug)) return 'big-letter';
+  if (COASTER_HANDLES.has(slug)) return 'coaster';
+  return 'plaque';
 }
 
 export default async function ShopSlugPage({ params }: RouteParams) {

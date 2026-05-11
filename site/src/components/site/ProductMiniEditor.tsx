@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container } from './Container';
 import { Button } from './Button';
 import { MiniScene3DClient } from './MiniScene3DClient';
@@ -11,8 +11,9 @@ type PreviewMode = '2d' | '3d';
 
 // Identifies which silhouette / composition the editor renders. Defaults to
 // 'plaque' (single-line text); 'big-letter' renders the user's name inside
-// the counter of a large serif initial — matches the Big Letter product line.
-export type EditorTemplate = 'plaque' | 'big-letter';
+// the counter of a large serif initial; 'coaster' is a round disc with the
+// name centred — matches the round-plaque / coaster product line.
+export type EditorTemplate = 'plaque' | 'big-letter' | 'coaster';
 
 export interface ProductMiniEditorProps {
   product: ProductSummary;
@@ -97,7 +98,17 @@ export function ProductMiniEditor({
   variantId,
 }: ProductMiniEditorProps) {
   const { addLine, openDrawer } = useCart();
-  const defaultText = extractDefaultText(product.name);
+  // Template-specific fallback so the 3D preview lands on a flattering letter.
+  // Big-letter banks on a counter glyph (O/A/D…) so the name reads inside the
+  // initial — 'Olivia' is the photographed demo. Coasters get a short Eid word
+  // that fits a 180mm disc at the default font size.
+  const fallback =
+    template === 'big-letter'
+      ? 'Olivia'
+      : template === 'coaster'
+        ? 'Eid'
+        : 'Your name';
+  const defaultText = extractDefaultText(product.name, fallback);
   const defaultPrimary = PRIMARY_SWATCHES[0]!.hex;
   const defaultSecondary = SECONDARY_SWATCHES[0]!.hex;
   const defaultFont = FONT_OPTIONS[0]!.id;
@@ -110,7 +121,9 @@ export function ProductMiniEditor({
   const [qty, setQty] = useState(1);
   const [open, setOpen] = useState<'primary' | 'secondary' | null>(null);
   const [added, setAdded] = useState(false);
-  const [mode, setMode] = useState<PreviewMode>('2d');
+  // 3D leads — shoppers see the real acrylic depth/finish up front; the 2D
+  // toggle stays available for low-power devices or accessibility.
+  const [mode, setMode] = useState<PreviewMode>('3d');
 
   const reset = () => {
     setText(defaultText);
@@ -235,27 +248,31 @@ export function ProductMiniEditor({
                 />
               </Row>
 
-              {/* Dimensions — border width slider */}
-              <Row label="Dimensions">
-                <div className="flex w-full items-center gap-4">
-                  <span className="font-serif text-xl italic text-ink-900">
-                    Border width
-                  </span>
-                  <input
-                    type="range"
-                    min={BORDER_MIN}
-                    max={BORDER_MAX}
-                    step={1}
-                    value={borderWidth}
-                    onChange={(e) => setBorderWidth(parseInt(e.target.value, 10))}
-                    aria-label="Border width in millimetres"
-                    className="flex-1 accent-terracotta-500"
-                  />
-                  <span className="font-mono text-xs uppercase tracking-[0.14em] text-ink-700 tabular-nums">
-                    {borderWidth} mm
-                  </span>
-                </div>
-              </Row>
+              {/* Dimensions — border width slider. Hidden for coaster
+                  products: the disc rim is fixed and only colours / text /
+                  font are editable. */}
+              {template !== 'coaster' && (
+                <Row label="Dimensions">
+                  <div className="flex w-full items-center gap-4">
+                    <span className="font-serif text-xl italic text-ink-900">
+                      Border width
+                    </span>
+                    <input
+                      type="range"
+                      min={BORDER_MIN}
+                      max={BORDER_MAX}
+                      step={1}
+                      value={borderWidth}
+                      onChange={(e) => setBorderWidth(parseInt(e.target.value, 10))}
+                      aria-label="Border width in millimetres"
+                      className="flex-1 accent-terracotta-500"
+                    />
+                    <span className="font-mono text-xs uppercase tracking-[0.14em] text-ink-700 tabular-nums">
+                      {borderWidth} mm
+                    </span>
+                  </div>
+                </Row>
+              )}
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -292,6 +309,14 @@ export function ProductMiniEditor({
                       primary={primary}
                       secondary={secondary}
                       borderWidth={borderWidth}
+                      ariaLabel={ariaLabel}
+                    />
+                  ) : template === 'coaster' ? (
+                    <CoasterPreview2D
+                      text={text || defaultText}
+                      primary={primary}
+                      secondary={secondary}
+                      font={font}
                       ariaLabel={ariaLabel}
                     />
                   ) : (
@@ -332,6 +357,26 @@ interface QuantityStepperProps {
 }
 
 function QuantityStepper({ value, onChange, min = 1, max = 10 }: QuantityStepperProps) {
+  // Keep a separate string state for the input so the field can briefly be
+  // empty / mid-edit ("" while the user backspaces from "1" to type "10")
+  // without the parent's number value collapsing to 0 or NaN. The external
+  // value wins on commit (blur / Enter) and on prop changes.
+  const [draft, setDraft] = useState<string>(String(value));
+  useEffect(() => {
+    setDraft(String(value));
+  }, [value]);
+
+  const commit = () => {
+    const n = parseInt(draft, 10);
+    if (Number.isFinite(n)) {
+      const clamped = Math.min(max, Math.max(min, n));
+      onChange(clamped);
+      setDraft(String(clamped));
+    } else {
+      setDraft(String(value));
+    }
+  };
+
   return (
     <div className="inline-flex items-center gap-1 rounded-full border border-ink-900 px-1">
       <button
@@ -343,12 +388,19 @@ function QuantityStepper({ value, onChange, min = 1, max = 10 }: QuantityStepper
       >
         −
       </button>
-      <span
-        aria-live="polite"
-        className="w-8 text-center font-mono text-sm tabular-nums text-ink-900"
-      >
-        {value}
-      </span>
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        aria-label="Quantity"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value.replace(/[^0-9]/g, ''))}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') (e.currentTarget as HTMLInputElement).blur();
+        }}
+        className="w-10 bg-transparent text-center font-mono text-sm tabular-nums text-ink-900 focus:outline-none"
+      />
       <button
         type="button"
         aria-label="Increase quantity"
@@ -630,6 +682,67 @@ function BigLetterPreview2D({
   );
 }
 
+interface CoasterPreview2DProps {
+  text: string;
+  primary: string;
+  secondary: string;
+  font: FontOption;
+  ariaLabel: string;
+}
+
+// Round coaster: a solid disc with a thin halo rim and the name centred.
+// Two visible layers — secondary is the back halo + base ring, primary is
+// the face of the disc; the engraved name uses secondary so it reads off
+// the disc. Mirrors the 3D coaster geometry's material assignment.
+function CoasterPreview2D({
+  text,
+  primary,
+  secondary,
+  font,
+  ariaLabel,
+}: CoasterPreview2DProps) {
+  // Name fontSize scales down for long strings so it stays inside the disc.
+  const len = Math.max(text.trim().length, 3);
+  const nameSize = Math.round(Math.min(70, Math.max(28, 280 / len)));
+  return (
+    <svg
+      role="img"
+      aria-label={ariaLabel}
+      viewBox="0 0 320 320"
+      className="block h-auto w-full max-w-[360px]"
+      style={{ filter: 'drop-shadow(0 8px 22px rgba(0,0,0,0.12))' }}
+    >
+      {/* Halo / base ring */}
+      <circle cx={160} cy={160} r={148} fill={secondary} />
+      {/* Disc face */}
+      <circle cx={160} cy={160} r={132} fill={primary} />
+      {/* Inner decorative ring — thin engrave line in secondary, suggests
+          the laser-scored inner border typical of Eid/coaster designs. */}
+      <circle
+        cx={160}
+        cy={160}
+        r={118}
+        fill="none"
+        stroke={secondary}
+        strokeWidth={2}
+        opacity={0.55}
+      />
+      <text
+        x={160}
+        y={160}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontFamily={font.family}
+        fontStyle={font.italic ? 'italic' : 'normal'}
+        fontSize={nameSize}
+        fill={secondary}
+      >
+        {text}
+      </text>
+    </svg>
+  );
+}
+
 interface ModeToggleProps {
   mode: PreviewMode;
   onChange: (m: PreviewMode) => void;
@@ -666,9 +779,9 @@ function ModeToggle({ mode, onChange }: ModeToggleProps) {
   );
 }
 
-function extractDefaultText(productName: string): string {
+function extractDefaultText(productName: string, fallback: string): string {
   const m = productName.match(/[""]([^""]+)[""]/);
-  return m && m[1] ? m[1] : 'Your name';
+  return m && m[1] ? m[1] : fallback;
 }
 
 function textFontSize(text: string): number {

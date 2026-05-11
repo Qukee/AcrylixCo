@@ -11,7 +11,7 @@ import type {
   PieceSpec,
 } from '@/designer/types';
 
-export type MiniScene3DTemplate = 'plaque' | 'big-letter';
+export type MiniScene3DTemplate = 'plaque' | 'big-letter' | 'coaster';
 
 interface MiniScene3DProps {
   text: string;
@@ -24,6 +24,13 @@ interface MiniScene3DProps {
 
 const PLAQUE_TEMPLATE = TEST_PIECES.find((p) => p.id === 'alex')!;
 const BIG_LETTER_TEMPLATE = TEST_PIECES.find((p) => p.id === 'big-letter')!;
+const COASTER_TEMPLATE = TEST_PIECES.find((p) => p.id === 'coaster')!;
+
+function templatePieceFor(t: MiniScene3DTemplate): PieceSpec {
+  if (t === 'big-letter') return BIG_LETTER_TEMPLATE;
+  if (t === 'coaster') return COASTER_TEMPLATE;
+  return PLAQUE_TEMPLATE;
+}
 
 export function MiniScene3D({
   text,
@@ -47,26 +54,44 @@ export function MiniScene3D({
       // into the counter of the initial.
       out.initial = firstLetter;
       out.name = effectiveText;
+    } else if (template === 'coaster') {
+      // Disc is a shape (no text); user's text rides the centred name layer.
+      out.name = effectiveText;
     } else {
       out.foreground = effectiveText;
     }
     return out;
   }, [template, firstLetter, effectiveText]);
 
-  // For the big-letter template the initial layer's font is fixed (DM
-  // Serif Display has the open counter the design relies on). For the
-  // plaque template the user's chosen font drives both 2D and 3D, so
-  // pipe it onto the text layer of the cloned piece.
+  // For big-letter the initial layer's font is fixed (DM Serif Display has the
+  // open counter the design relies on). For plaque and coaster, the user's
+  // chosen font drives the text layer(s) of the cloned piece.
+  //
+  // Coaster also scales the name fontSize to text length so longer names stay
+  // inside the disc — the geometry pipeline doesn't auto-fit, so we sample
+  // here and bake the size into the piece spec.
   const piece: PieceSpec = useMemo(() => {
-    const base = template === 'big-letter' ? BIG_LETTER_TEMPLATE : PLAQUE_TEMPLATE;
+    const base = templatePieceFor(template);
     if (template === 'big-letter') {
-      // Override the name layer's font to whatever the user picked so the
-      // letterform inside the initial respects the dropdown.
       return {
         ...base,
         layers: base.layers.map((l) =>
           l.id === 'name' && l.content.type === 'text'
             ? { ...l, content: { ...l.content, fontUrl } }
+            : l,
+        ),
+      };
+    }
+    if (template === 'coaster') {
+      // Disc is 180mm wide; leave a ~20mm rim each side so the name reads
+      // as engraved on the face, not bleeding off the edge.
+      const nameLen = Math.max(effectiveText.trim().length, 3);
+      const nameFontSize = Math.round(Math.min(42, Math.max(16, 140 / nameLen)));
+      return {
+        ...base,
+        layers: base.layers.map((l) =>
+          l.id === 'name' && l.content.type === 'text'
+            ? { ...l, content: { ...l.content, fontUrl, fontSize: nameFontSize } }
             : l,
         ),
       };
@@ -79,7 +104,7 @@ export function MiniScene3D({
           : l,
       ),
     };
-  }, [template, fontUrl]);
+  }, [template, fontUrl, effectiveText]);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,17 +122,27 @@ export function MiniScene3D({
   }, [piece, borderWidthMm, customText]);
 
   const state: DesignerState = useMemo(() => {
-    const layerMaterials: Record<string, string> =
-      template === 'big-letter'
-        ? {
-            base: nearestMaterialId(secondaryHex),
-            initial: nearestMaterialId(secondaryHex),
-            name: nearestMaterialId(primaryHex),
-          }
-        : {
-            base: nearestMaterialId(secondaryHex),
-            foreground: nearestMaterialId(primaryHex),
-          };
+    let layerMaterials: Record<string, string>;
+    if (template === 'big-letter') {
+      layerMaterials = {
+        base: nearestMaterialId(secondaryHex),
+        initial: nearestMaterialId(secondaryHex),
+        name: nearestMaterialId(primaryHex),
+      };
+    } else if (template === 'coaster') {
+      // Disc = primary acrylic (the visible top face); halo base = secondary;
+      // engraved name = secondary (contrasts off the disc face).
+      layerMaterials = {
+        base: nearestMaterialId(secondaryHex),
+        disc: nearestMaterialId(primaryHex),
+        name: nearestMaterialId(secondaryHex),
+      };
+    } else {
+      layerMaterials = {
+        base: nearestMaterialId(secondaryHex),
+        foreground: nearestMaterialId(primaryHex),
+      };
+    }
     return {
       viewMode: '3d',
       borderThicknessMm: borderWidthMm,

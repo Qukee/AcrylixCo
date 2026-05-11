@@ -121,6 +121,46 @@ export const TEST_PIECES: PieceSpec[] = [
     approxWidthCm: 38,
   },
   {
+    id: 'coaster',
+    displayName: 'Round coaster — name on a disc',
+    baseDerivedFromLayerId: 'disc',
+    baseThicknessMm: 4,
+    layers: [
+      {
+        id: 'disc',
+        kind: 'foreground',
+        content: { type: 'shape', shape: 'circle', size: 180 },
+        thicknessMm: 4,
+        zStackOrder: 1,
+      },
+      {
+        id: 'name',
+        kind: 'accent',
+        content: {
+          type: 'text',
+          text: 'Eid',
+          fontUrl: '/fonts/DMSerifDisplay-Regular.ttf',
+          fontSize: 64,
+        },
+        thicknessMm: 3,
+        zStackOrder: 2,
+      },
+    ],
+    unifyBase: true,
+    defaults: {
+      // Coasters have a tight halo — exposing the rim is the only "dimension"
+      // shoppers can tweak. We keep this fixed in the UI for coaster products.
+      borderThicknessMm: 4,
+      layerMaterials: {
+        base: 'gold-mirror',
+        disc: 'cream-matte',
+        name: 'black-matte',
+      },
+      showStand: false,
+    },
+    approxWidthCm: 10,
+  },
+  {
     id: 'mia',
     displayName: '"Mia" in heart',
     baseDerivedFromLayerId: 'heart',
