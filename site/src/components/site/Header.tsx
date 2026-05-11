@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CartIcon } from '@/components/cart/CartIcon';
 
 export function Header() {
   return (
@@ -19,11 +20,11 @@ export function Header() {
           <Link href="/shop" className="hover:text-ink-900">
             Shop
           </Link>
-          <Link href="/shop/cake-toppers" className="hover:text-ink-900">
-            Cake toppers
+          <Link href="/shop/kids" className="hover:text-ink-900">
+            Kids
           </Link>
-          <Link href="/shop/personal-milestones" className="hover:text-ink-900">
-            Wedding &amp; baby
+          <Link href="/shop/gifts" className="hover:text-ink-900">
+            Gifts
           </Link>
           <Link href="/about" className="hover:text-ink-900">
             Studio
@@ -34,13 +35,17 @@ export function Header() {
           >
             Customize
           </Link>
+          <CartIcon />
         </nav>
-        <Link
-          href="/customize"
-          className="inline-flex rounded-full bg-terracotta-500 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-colors hover:bg-terracotta-600 md:hidden"
-        >
-          Customize
-        </Link>
+        <div className="flex items-center gap-3 md:hidden">
+          <CartIcon />
+          <Link
+            href="/customize"
+            className="inline-flex rounded-full bg-terracotta-500 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-colors hover:bg-terracotta-600"
+          >
+            Customize
+          </Link>
+        </div>
       </div>
     </header>
   );

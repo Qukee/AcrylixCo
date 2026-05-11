@@ -201,6 +201,7 @@ export async function getProductBySlug(slug: string): Promise<{
   product: ProductSummary;
   images: { url: string; alt: string }[];
   categories: CategorySummary[];
+  variantId: string;
 } | null> {
   const data = await storefrontRequest<{ product: RawProduct | null }>(
     /* GraphQL */ `
@@ -214,6 +215,7 @@ export async function getProductBySlug(slug: string): Promise<{
     { handle: slug },
   );
   if (!data.product) return null;
+  const variantId = data.product.variants.nodes[0]?.id ?? '';
   return {
     product: toSummary(data.product),
     images: data.product.images.nodes.map((n) => ({
@@ -223,6 +225,7 @@ export async function getProductBySlug(slug: string): Promise<{
     categories: data.product.collections.nodes.map((c, i) =>
       toCategorySummary({ id: '', handle: c.handle, title: c.title, description: c.description }, i),
     ),
+    variantId,
   };
 }
 

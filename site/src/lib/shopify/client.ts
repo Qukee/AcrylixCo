@@ -1,24 +1,18 @@
 import { createStorefrontApiClient } from '@shopify/storefront-api-client';
 
 /**
- * Storefront API singleton. Reads from process.env at module load so server
- * components and route handlers all share one client. Token is safe to ship
- * to the browser (Storefront tokens are public-by-design); we still keep
- * this module server-rendered to avoid an extra round-trip — every public
- * page that needs catalog data is already an RSC.
+ * Storefront API singleton. Works in both server and client contexts because
+ * we read the public-safe NEXT_PUBLIC_* env vars. The public Storefront token
+ * is designed by Shopify to ship to the browser — that's how Cart mutations
+ * happen from React components.
  *
- * Env vars are sourced from a custom app in Shopify admin → Settings → Apps
- * and sales channels → Develop apps. See Plan/build/phase-3-headless-shopify.md.
+ * Source: Shopify admin → Headless sales channel → Storefront API tokens.
+ * See Plan/build/phase-3-headless-shopify.md and reference_shopify.md.
  */
-const domain = process.env.SHOPIFY_STORE_DOMAIN;
-const token = process.env.SHOPIFY_STOREFRONT_TOKEN;
-
-if (!domain || !token) {
-  // Lazy-fail at first query instead of at import time so `next build` (which
-  // tree-shakes server modules even when their env isn't set) still passes
-  // when SHOPIFY_* aren't configured yet. The error surfaces at the first
-  // actual storefront call, which is what we want during Phase 3 rollout.
-}
+const domain =
+  process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN;
+const token =
+  process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN || process.env.SHOPIFY_STOREFRONT_TOKEN;
 
 export const storefront = createStorefrontApiClient({
   storeDomain: domain || 'placeholder.myshopify.com',
@@ -44,7 +38,9 @@ export async function storefrontRequest<TData>(
   const { data, errors } = await storefront.request<TData>(operation, { variables });
   if (errors) {
     throw new Error(
-      `Storefront API error: ${errors.graphQLErrors?.map((e) => e.message).join('; ') ?? 'unknown'}`,
+      `Storefront API error: ${
+        errors.graphQLErrors?.map((e) => e.message).join('; ') ?? 'unknown'
+      }`,
     );
   }
   if (!data) {

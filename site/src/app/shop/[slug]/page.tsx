@@ -7,6 +7,7 @@ import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
 import { ProductGallery } from '@/components/site/ProductGallery';
 import { ProductMiniEditor } from '@/components/site/ProductMiniEditor';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { StructuredData } from '@/components/site/StructuredData';
 import { CategorySidebar } from '../CategorySidebar';
 import {
@@ -78,7 +79,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
   // Try product first.
   const result = await getProductBySlug(slug);
   if (result) {
-    const { product, images, categories } = result;
+    const { product, images, categories, variantId } = result;
     const related = await getRelatedProducts(product.id, 4);
     return (
       <>
@@ -150,7 +151,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button size="lg">Add to cart</Button>
+              <AddToCartButton variantId={variantId} />
               <Button href="/customize" size="lg" variant="ghost">
                 See it in 3D in your name
               </Button>
@@ -244,7 +245,12 @@ export default async function ShopSlugPage({ params }: RouteParams) {
       <ProductMiniEditor
         product={product}
         categories={categories}
-        template={product.slug === 'olivia-circular-frame' ? 'big-letter' : 'plaque'}
+        template={
+          product.slug === 'big-letter-sign' || product.slug === 'olivia-circular-frame'
+            ? 'big-letter'
+            : 'plaque'
+        }
+        variantId={variantId}
       />
 
       {related.length > 0 && (

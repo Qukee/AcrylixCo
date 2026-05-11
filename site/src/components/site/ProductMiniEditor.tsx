@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Container } from './Container';
 import { Button } from './Button';
 import { MiniScene3DClient } from './MiniScene3DClient';
+import { useCart } from '@/components/cart/CartProvider';
 import type { ProductSummary } from '@/lib/catalog/queries';
 
 type PreviewMode = '2d' | '3d';
@@ -17,6 +18,7 @@ export interface ProductMiniEditorProps {
   product: ProductSummary;
   categories: { slug: string; name: string }[];
   template?: EditorTemplate;
+  variantId?: string;
 }
 
 interface Swatch {
@@ -89,9 +91,12 @@ const FONT_OPTIONS: FontOption[] = [
   },
 ];
 
-const CART_KEY = 'acx_cart_v1';
-
-export function ProductMiniEditor({ product, template = 'plaque' }: ProductMiniEditorProps) {
+export function ProductMiniEditor({
+  product,
+  template = 'plaque',
+  variantId,
+}: ProductMiniEditorProps) {
+  const { addLine, openDrawer } = useCart();
   const defaultText = extractDefaultText(product.name);
   const defaultPrimary = PRIMARY_SWATCHES[0]!.hex;
   const defaultSecondary = SECONDARY_SWATCHES[0]!.hex;
@@ -116,23 +121,45 @@ export function ProductMiniEditor({ product, template = 'plaque' }: ProductMiniE
     setAdded(false);
   };
 
-  const handleAddToCart = () => {
-    addToCart({
-      productId: product.id,
-      productSlug: product.slug,
-      productName: product.name,
-      priceCents: product.priceCents,
-      customization: {
-        text: text || defaultText,
-        foreground: primary,
-        base: secondary,
-        font: fontId,
-        borderWidthMm: borderWidth,
-      },
-      qty: 1,
-    });
-    setAdded(true);
-    window.setTimeout(() => setAdded(false), 2400);
+  const handleAddToCart = async () => {
+    if (!variantId) {
+      // No Shopify variant wired (older pages or tests) — silently no-op.
+      return;
+    }
+    const customisation = {
+      text: text || defaultText,
+      foreground: primary,
+      base: secondary,
+      font: fontId,
+      borderWidthMm: borderWidth,
+    };
+    const primaryLabelHuman =
+      PRIMARY_SWATCHES.find((s) => s.hex.toLowerCase() === primary.toLowerCase())?.label ??
+      primary;
+    const secondaryLabelHuman =
+      SECONDARY_SWATCHES.find((s) => s.hex.toLowerCase() === secondary.toLowerCase())?.label ??
+      secondary;
+    const fontLabel = FONT_OPTIONS.find((f) => f.id === fontId)?.label ?? fontId;
+    // Human-friendly keys appear in the Shopify-hosted checkout + customer
+    // confirmation email; the `_design` key is hidden (Shopify drops keys
+    // prefixed with `_` from customer-facing surfaces) and carries the
+    // structured payload that the studio production queue will consume.
+    const attributes = [
+      { key: 'Text', value: customisation.text },
+      { key: 'Primary colour', value: primaryLabelHuman },
+      { key: 'Secondary colour', value: secondaryLabelHuman },
+      { key: 'Font', value: fontLabel },
+      { key: 'Border width', value: `${customisation.borderWidthMm} mm` },
+      { key: '_design', value: JSON.stringify(customisation) },
+    ];
+    try {
+      await addLine(variantId, 1, attributes);
+      setAdded(true);
+      window.setTimeout(() => setAdded(false), 2400);
+      openDrawer();
+    } catch (err) {
+      console.error('add custom piece failed', err);
+    }
   };
 
   const font = FONT_OPTIONS.find((f) => f.id === fontId) ?? FONT_OPTIONS[0]!;
@@ -607,48 +634,3 @@ function textFontSize(text: string): number {
   return Math.round(Math.min(110, Math.max(38, 480 / len)));
 }
 
-interface CartItem {
-  id: string;
-  productId: string;
-  productSlug: string;
-  productName: string;
-  priceCents: number;
-  customization: {
-    text: string;
-    foreground: string;
-    base: string;
-    font: string;
-    borderWidthMm: number;
-  };
-  qty: number;
-  addedAt: number;
-}
-
-interface Cart {
-  items: CartItem[];
-  updatedAt: number;
-}
-
-function addToCart(item: Omit<CartItem, 'id' | 'addedAt'>): void {
-  if (typeof window === 'undefined') return;
-  const raw = window.localStorage.getItem(CART_KEY);
-  let cart: Cart = { items: [], updatedAt: 0 };
-  if (raw) {
-    try {
-      cart = JSON.parse(raw) as Cart;
-    } catch {
-      cart = { items: [], updatedAt: 0 };
-    }
-  }
-  cart.items.push({
-    ...item,
-    id:
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-    addedAt: Date.now(),
-  });
-  cart.updatedAt = Date.now();
-  window.localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  window.dispatchEvent(new CustomEvent('acx:cart-updated', { detail: cart }));
-}
