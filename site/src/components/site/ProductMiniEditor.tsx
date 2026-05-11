@@ -8,9 +8,15 @@ import type { ProductSummary } from '@/lib/catalog/queries';
 
 type PreviewMode = '2d' | '3d';
 
+// Identifies which silhouette / composition the editor renders. Defaults to
+// 'plaque' (single-line text); 'big-letter' renders the user's name inside
+// the counter of a large serif initial — matches the Big Letter product line.
+export type EditorTemplate = 'plaque' | 'big-letter';
+
 export interface ProductMiniEditorProps {
   product: ProductSummary;
   categories: { slug: string; name: string }[];
+  template?: EditorTemplate;
 }
 
 interface Swatch {
@@ -85,7 +91,7 @@ const FONT_OPTIONS: FontOption[] = [
 
 const CART_KEY = 'acx_cart_v1';
 
-export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
+export function ProductMiniEditor({ product, template = 'plaque' }: ProductMiniEditorProps) {
   const defaultText = extractDefaultText(product.name);
   const defaultPrimary = PRIMARY_SWATCHES[0]!.hex;
   const defaultSecondary = SECONDARY_SWATCHES[0]!.hex;
@@ -249,42 +255,25 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
               <ModeToggle mode={mode} onChange={setMode} />
               {mode === '2d' ? (
                 <div className="absolute inset-0 grid place-items-center px-6">
-                  <svg
-                    role="img"
-                    aria-label={ariaLabel}
-                    viewBox="0 0 400 200"
-                    className="block h-auto w-full max-w-[420px]"
-                    style={{ filter: 'drop-shadow(0 8px 22px rgba(0,0,0,0.12))' }}
-                  >
-                    <text
-                      x={200}
-                      y={100}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontFamily={font.family}
-                      fontStyle={font.italic ? 'italic' : 'normal'}
+                  {template === 'big-letter' ? (
+                    <BigLetterPreview2D
+                      text={text || defaultText}
+                      primary={primary}
+                      secondary={secondary}
+                      borderWidth={borderWidth}
+                      ariaLabel={ariaLabel}
+                    />
+                  ) : (
+                    <PlaquePreview2D
+                      text={text || defaultText}
+                      primary={primary}
+                      secondary={secondary}
+                      borderWidth={borderWidth}
+                      font={font}
                       fontSize={fontSize}
-                      fill={secondary}
-                      stroke={secondary}
-                      strokeWidth={borderWidth * 3}
-                      strokeLinejoin="round"
-                      paintOrder="stroke"
-                    >
-                      {text || defaultText}
-                    </text>
-                    <text
-                      x={200}
-                      y={100}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontFamily={font.family}
-                      fontStyle={font.italic ? 'italic' : 'normal'}
-                      fontSize={fontSize}
-                      fill={primary}
-                    >
-                      {text || defaultText}
-                    </text>
-                  </svg>
+                      ariaLabel={ariaLabel}
+                    />
+                  )}
                 </div>
               ) : (
                 <MiniScene3DClient
@@ -293,6 +282,7 @@ export function ProductMiniEditor({ product }: ProductMiniEditorProps) {
                   secondaryHex={secondary}
                   fontUrl={font.url}
                   borderWidthMm={borderWidth}
+                  template={template}
                 />
               )}
             </div>
@@ -444,6 +434,129 @@ function Squiggle() {
         strokeWidth="4"
         strokeLinecap="round"
       />
+    </svg>
+  );
+}
+
+interface PlaquePreview2DProps {
+  text: string;
+  primary: string;
+  secondary: string;
+  borderWidth: number;
+  font: FontOption;
+  fontSize: number;
+  ariaLabel: string;
+}
+
+function PlaquePreview2D({
+  text,
+  primary,
+  secondary,
+  borderWidth,
+  font,
+  fontSize,
+  ariaLabel,
+}: PlaquePreview2DProps) {
+  return (
+    <svg
+      role="img"
+      aria-label={ariaLabel}
+      viewBox="0 0 400 200"
+      className="block h-auto w-full max-w-[420px]"
+      style={{ filter: 'drop-shadow(0 8px 22px rgba(0,0,0,0.12))' }}
+    >
+      <text
+        x={200}
+        y={100}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontFamily={font.family}
+        fontStyle={font.italic ? 'italic' : 'normal'}
+        fontSize={fontSize}
+        fill={secondary}
+        stroke={secondary}
+        strokeWidth={borderWidth * 3}
+        strokeLinejoin="round"
+        paintOrder="stroke"
+      >
+        {text}
+      </text>
+      <text
+        x={200}
+        y={100}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontFamily={font.family}
+        fontStyle={font.italic ? 'italic' : 'normal'}
+        fontSize={fontSize}
+        fill={primary}
+      >
+        {text}
+      </text>
+    </svg>
+  );
+}
+
+interface BigLetterPreview2DProps {
+  text: string;
+  primary: string;
+  secondary: string;
+  borderWidth: number;
+  ariaLabel: string;
+}
+
+// Big-letter template: a serif initial sized to dominate the canvas, with
+// the full name overlaid into the counter. Mirrors the look of the
+// photographed product line — secondary colour is the initial (back layer),
+// primary colour is the name (top layer).
+function BigLetterPreview2D({
+  text,
+  primary,
+  secondary,
+  borderWidth,
+  ariaLabel,
+}: BigLetterPreview2DProps) {
+  const firstLetter = (text.trim().charAt(0) || 'A').toUpperCase();
+  // Name fontSize scales down for long strings so it stays inside the
+  // initial's counter.
+  const nameLen = Math.max(text.trim().length, 3);
+  const nameSize = Math.round(Math.min(58, Math.max(28, 240 / nameLen)));
+  return (
+    <svg
+      role="img"
+      aria-label={ariaLabel}
+      viewBox="0 0 400 320"
+      className="block h-auto w-full max-w-[420px]"
+      style={{ filter: 'drop-shadow(0 8px 22px rgba(0,0,0,0.12))' }}
+    >
+      {/* Back layer — large serif initial with halo stroke = base acrylic. */}
+      <text
+        x={200}
+        y={170}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontFamily="AcxDMSerif, Georgia, serif"
+        fontSize={300}
+        fill={secondary}
+        stroke={secondary}
+        strokeWidth={borderWidth * 2.5}
+        strokeLinejoin="round"
+        paintOrder="stroke"
+      >
+        {firstLetter}
+      </text>
+      {/* Front layer — full name inside the counter. */}
+      <text
+        x={200}
+        y={175}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontFamily="AcxDMSerif, Georgia, serif"
+        fontSize={nameSize}
+        fill={primary}
+      >
+        {text}
+      </text>
     </svg>
   );
 }

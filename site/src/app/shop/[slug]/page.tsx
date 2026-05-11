@@ -5,6 +5,7 @@ import { Container } from '@/components/site/Container';
 import { Button } from '@/components/site/Button';
 import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
+import { ProductGallery } from '@/components/site/ProductGallery';
 import { ProductMiniEditor } from '@/components/site/ProductMiniEditor';
 import { StructuredData } from '@/components/site/StructuredData';
 import { CategorySidebar } from '../CategorySidebar';
@@ -118,17 +119,7 @@ export default async function ShopSlugPage({ params }: RouteParams) {
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2">
-          <div className="grid gap-4">
-            {images.map((img, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={i}
-                src={img.url}
-                alt={img.alt}
-                className="aspect-[4/3] w-full rounded-md bg-cream-50 object-cover"
-              />
-            ))}
-          </div>
+          <ProductGallery images={images.map((i) => ({ url: i.url, alt: i.alt }))} />
 
           <div>
             <h1 className="font-serif text-4xl italic">{product.name}</h1>
@@ -250,7 +241,11 @@ export default async function ShopSlugPage({ params }: RouteParams) {
         </div>
       </Container>
 
-      <ProductMiniEditor product={product} categories={categories} />
+      <ProductMiniEditor
+        product={product}
+        categories={categories}
+        template={product.slug === 'olivia-circular-frame' ? 'big-letter' : 'plaque'}
+      />
 
       {related.length > 0 && (
         <Container className="py-16 md:py-24">

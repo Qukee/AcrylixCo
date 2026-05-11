@@ -73,6 +73,54 @@ export const TEST_PIECES: PieceSpec[] = [
     approxWidthCm: 38,
   },
   {
+    id: 'big-letter',
+    displayName: 'Big Letter — name inside the initial',
+    baseDerivedFromLayerId: 'initial',
+    baseThicknessMm: 5,
+    layers: [
+      {
+        id: 'initial',
+        kind: 'foreground',
+        content: {
+          type: 'text',
+          text: 'O',
+          fontUrl: '/fonts/DMSerifDisplay-Regular.ttf',
+          fontSize: 220,
+        },
+        thicknessMm: 5,
+        zStackOrder: 1,
+      },
+      {
+        id: 'name',
+        kind: 'accent',
+        content: {
+          type: 'text',
+          text: 'Olivia',
+          fontUrl: '/fonts/DMSerifDisplay-Regular.ttf',
+          fontSize: 60,
+        },
+        thicknessMm: 4,
+        zStackOrder: 2,
+        // Vertically nudge the name into the visual centre of the initial's
+        // counter — both texts share an opentype baseline at y=0, but the
+        // initial extends much further up so we offset upward by ~half its
+        // cap height minus the name's cap height.
+        offsetMm: { x: 0, y: 60 },
+      },
+    ],
+    unifyBase: false,
+    defaults: {
+      borderThicknessMm: 7,
+      layerMaterials: {
+        base: 'cream-matte',
+        initial: 'cream-matte',
+        name: 'dusty-pink-matte',
+      },
+      showStand: true,
+    },
+    approxWidthCm: 38,
+  },
+  {
     id: 'mia',
     displayName: '"Mia" in heart',
     baseDerivedFromLayerId: 'heart',

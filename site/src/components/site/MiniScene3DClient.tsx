@@ -1,9 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import type { MiniScene3DTemplate } from './MiniScene3D';
 
-// Keep R3F + Three off the PDP's first paint by lazy-importing the actual
-// scene module only when the 3D toggle is engaged.
 const MiniScene3D = dynamic(() => import('./MiniScene3D').then((m) => m.MiniScene3D), {
   ssr: false,
   loading: () => (
@@ -21,6 +20,7 @@ interface MiniScene3DClientProps {
   secondaryHex: string;
   fontUrl: string;
   borderWidthMm: number;
+  template: MiniScene3DTemplate;
 }
 
 export function MiniScene3DClient(props: MiniScene3DClientProps) {

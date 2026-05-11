@@ -11,10 +11,7 @@ import type {
   PieceSpec,
 } from '@/designer/types';
 
-// "Alex" — single-line bold sans plaque. Universal template for the mini
-// preview, regardless of which product page mounts the editor; the user
-// gets a fast-rebuild plaque that exercises both base + foreground layers.
-const TEMPLATE = TEST_PIECES[0]!;
+export type MiniScene3DTemplate = 'plaque' | 'big-letter';
 
 interface MiniScene3DProps {
   text: string;
@@ -22,7 +19,11 @@ interface MiniScene3DProps {
   secondaryHex: string;
   fontUrl: string;
   borderWidthMm: number;
+  template: MiniScene3DTemplate;
 }
+
+const PLAQUE_TEMPLATE = TEST_PIECES.find((p) => p.id === 'alex')!;
+const BIG_LETTER_TEMPLATE = TEST_PIECES.find((p) => p.id === 'big-letter')!;
 
 export function MiniScene3D({
   text,
@@ -30,31 +31,55 @@ export function MiniScene3D({
   secondaryHex,
   fontUrl,
   borderWidthMm,
+  template,
 }: MiniScene3DProps) {
-  // Defer geometry rebuilds while the user types so the canvas doesn't
-  // re-thrash on every keystroke. React 19 schedules these as non-urgent.
   const deferredText = useDeferredValue(text);
 
   const [geometry, setGeometry] = useState<PieceGeometry | null>(null);
 
-  const customText = useMemo(
-    () => ({ foreground: deferredText || 'Your name' }),
-    [deferredText],
-  );
+  const effectiveText = deferredText || 'Your name';
+  const firstLetter = effectiveText.trim().charAt(0).toUpperCase() || 'A';
 
-  // Clone the template with the user's chosen font URL on the text layer
-  // so opentype.js parses the right glyphs at geometry-build time.
-  const piece: PieceSpec = useMemo(
-    () => ({
-      ...TEMPLATE,
-      layers: TEMPLATE.layers.map((l) =>
+  const customText = useMemo<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    if (template === 'big-letter') {
+      // Initial is the big background letter; name is the full text laid
+      // into the counter of the initial.
+      out.initial = firstLetter;
+      out.name = effectiveText;
+    } else {
+      out.foreground = effectiveText;
+    }
+    return out;
+  }, [template, firstLetter, effectiveText]);
+
+  // For the big-letter template the initial layer's font is fixed (DM
+  // Serif Display has the open counter the design relies on). For the
+  // plaque template the user's chosen font drives both 2D and 3D, so
+  // pipe it onto the text layer of the cloned piece.
+  const piece: PieceSpec = useMemo(() => {
+    const base = template === 'big-letter' ? BIG_LETTER_TEMPLATE : PLAQUE_TEMPLATE;
+    if (template === 'big-letter') {
+      // Override the name layer's font to whatever the user picked so the
+      // letterform inside the initial respects the dropdown.
+      return {
+        ...base,
+        layers: base.layers.map((l) =>
+          l.id === 'name' && l.content.type === 'text'
+            ? { ...l, content: { ...l.content, fontUrl } }
+            : l,
+        ),
+      };
+    }
+    return {
+      ...base,
+      layers: base.layers.map((l) =>
         l.content.type === 'text'
           ? { ...l, content: { ...l.content, fontUrl } }
           : l,
       ),
-    }),
-    [fontUrl],
-  );
+    };
+  }, [template, fontUrl]);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,21 +96,28 @@ export function MiniScene3D({
     };
   }, [piece, borderWidthMm, customText]);
 
-  const state: DesignerState = useMemo(
-    () => ({
+  const state: DesignerState = useMemo(() => {
+    const layerMaterials: Record<string, string> =
+      template === 'big-letter'
+        ? {
+            base: nearestMaterialId(secondaryHex),
+            initial: nearestMaterialId(secondaryHex),
+            name: nearestMaterialId(primaryHex),
+          }
+        : {
+            base: nearestMaterialId(secondaryHex),
+            foreground: nearestMaterialId(primaryHex),
+          };
+    return {
       viewMode: '3d',
       borderThicknessMm: borderWidthMm,
-      layerMaterials: {
-        base: nearestMaterialId(secondaryHex),
-        foreground: nearestMaterialId(primaryHex),
-      },
+      layerMaterials,
       customText,
       glowMode: 'day',
       autoRotate: false,
       showStats: false,
-    }),
-    [primaryHex, secondaryHex, customText, borderWidthMm],
-  );
+    };
+  }, [template, primaryHex, secondaryHex, customText, borderWidthMm]);
 
   return (
     <div className="absolute inset-0">
