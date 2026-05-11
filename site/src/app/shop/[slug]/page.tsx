@@ -6,7 +6,7 @@ import { SectionTitle } from '@/components/site/SectionTitle';
 import { ProductGrid } from '@/components/site/ProductGrid';
 import { ProductGallery } from '@/components/site/ProductGallery';
 import { ProductMiniEditor } from '@/components/site/ProductMiniEditor';
-import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { Button } from '@/components/site/Button';
 import { StructuredData } from '@/components/site/StructuredData';
 import { CategorySidebar } from '../CategorySidebar';
 import {
@@ -148,8 +148,15 @@ export default async function ShopSlugPage({ params }: RouteParams) {
 
             <p className="mt-8 font-serif text-3xl">{formatPrice(product.priceCents)} AUD</p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <AddToCartButton variantId={variantId} />
+            {/* Primary CTA is the customiser below. Top-of-page add-to-cart was
+                making it easy to miss the editor entirely. */}
+            <div className="mt-8">
+              <Button href="#customise" size="lg">
+                Customise yours ↓
+              </Button>
+              <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">
+                Type your name, pick colours, see it live below.
+              </p>
             </div>
           </div>
         </div>

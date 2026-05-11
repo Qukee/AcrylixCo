@@ -107,6 +107,7 @@ export function ProductMiniEditor({
   const [secondary, setSecondary] = useState(defaultSecondary);
   const [fontId, setFontId] = useState(defaultFont);
   const [borderWidth, setBorderWidth] = useState(BORDER_DEFAULT);
+  const [qty, setQty] = useState(1);
   const [open, setOpen] = useState<'primary' | 'secondary' | null>(null);
   const [added, setAdded] = useState(false);
   const [mode, setMode] = useState<PreviewMode>('2d');
@@ -117,6 +118,7 @@ export function ProductMiniEditor({
     setSecondary(defaultSecondary);
     setFontId(defaultFont);
     setBorderWidth(BORDER_DEFAULT);
+    setQty(1);
     setOpen(null);
     setAdded(false);
   };
@@ -153,7 +155,7 @@ export function ProductMiniEditor({
       { key: '_design', value: JSON.stringify(customisation) },
     ];
     try {
-      await addLine(variantId, 1, attributes);
+      await addLine(variantId, qty, attributes);
       setAdded(true);
       window.setTimeout(() => setAdded(false), 2400);
       openDrawer();
@@ -173,7 +175,7 @@ export function ProductMiniEditor({
   const ariaLabel = `Preview: "${text || defaultText}" — primary ${primaryLabel.toLowerCase()}, secondary ${secondaryLabel.toLowerCase()}`;
 
   return (
-    <section className="border-y border-cream-200 bg-white">
+    <section id="customise" className="scroll-mt-24 border-y border-cream-200 bg-white">
       <Container className="py-16 md:py-24">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-start md:gap-16">
           {/* Controls column */}
@@ -256,9 +258,14 @@ export function ProductMiniEditor({
               </Row>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-3">
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <QuantityStepper value={qty} onChange={setQty} />
               <Button onClick={handleAddToCart} variant="primary" size="md" type="button">
-                {added ? 'Added to cart ✓' : 'Add my custom piece'}
+                {added
+                  ? 'Added to cart ✓'
+                  : qty === 1
+                    ? 'Add my custom piece'
+                    : `Add ${qty} to cart`}
               </Button>
               <button
                 type="button"
@@ -314,6 +321,44 @@ export function ProductMiniEditor({
         </div>
       </Container>
     </section>
+  );
+}
+
+interface QuantityStepperProps {
+  value: number;
+  onChange: (n: number) => void;
+  min?: number;
+  max?: number;
+}
+
+function QuantityStepper({ value, onChange, min = 1, max = 10 }: QuantityStepperProps) {
+  return (
+    <div className="inline-flex items-center gap-1 rounded-full border border-ink-900 px-1">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        onClick={() => onChange(Math.max(min, value - 1))}
+        disabled={value <= min}
+        className="grid h-9 w-9 place-items-center rounded-full text-lg leading-none text-ink-900 transition-colors hover:bg-cream-50 disabled:cursor-not-allowed disabled:text-ink-500"
+      >
+        −
+      </button>
+      <span
+        aria-live="polite"
+        className="w-8 text-center font-mono text-sm tabular-nums text-ink-900"
+      >
+        {value}
+      </span>
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={() => onChange(Math.min(max, value + 1))}
+        disabled={value >= max}
+        className="grid h-9 w-9 place-items-center rounded-full text-lg leading-none text-ink-900 transition-colors hover:bg-cream-50 disabled:cursor-not-allowed disabled:text-ink-500"
+      >
+        +
+      </button>
+    </div>
   );
 }
 
